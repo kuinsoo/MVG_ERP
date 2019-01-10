@@ -1,0 +1,158 @@
+package outsourcing.dao;
+
+import material.vo.MaterialVo;
+import outsourcing.vo.AccountVo;
+import outsourcing.vo.ContractVo;
+import outsourcing.vo.ImportVo;
+import outsourcing.vo.PlanningVo;
+import outsourcing.vo.SchedulePlanVo;
+import outsourcing.vo.ScheduleVo;
+import outsourcing.vo.StatementVo;
+
+import java.util.List;
+import java.util.Map;
+
+
+public interface IOutsourcingDao {
+    /**
+     * 기획서 전체 검색
+     * @return
+     */
+    public List<PlanningVo> getAllPlanning();
+
+    /**
+     * 여러가지 검색 조건으로  기획서 검색
+     * @return
+     */
+    public List<PlanningVo> getPlanningList(Map<String, String> planVo);
+    
+    /**
+     *@Method Name : updatePlannig
+     *@date : 2018. 9. 21.
+     *@author : 박동주
+     *@Method 설명 : 기획서 수정
+     *@param planVo
+     *@return
+     */
+    public int updatePlanning(Map<String, String> planVo);
+    
+    /**
+     * 
+     *@Method Name : insertPlanning
+     *@date : 2018. 9. 27.
+     *@author : 박동주
+     *@Method 설명 : 기획서 등록
+     *@param planVo
+     *@return
+     */
+    public int insertPlanning(PlanningVo planVo);
+    
+    /**
+     *@Method Name : deletePlan
+     *@date : 2018. 9. 27.
+     *@author : 박동주
+     *@Method 설명 :
+     *@param plan_no
+     *@return
+     */
+    public int deletePlan(List<String> plan_no);
+    
+    /**
+     * 계약서 전체 검색
+     * @return
+     */
+    public List<ContractVo> getAllContract();
+
+    /**
+     * 여러가지 검색 조건으로  계약서 검색
+     * @return
+     */
+    public List<ContractVo> getContract(Map<String, String> contVo);
+    
+    /**
+     *@Method Name : insertContract
+     *@date : 2018. 9. 28.
+     *@author : 박동주
+     *@Method 설명 : 계약서 등록
+     *@param contVo
+     *@return
+     */
+    public int insertContract(ContractVo contVo);
+    
+    /**
+     *@Method Name : deleteCont
+     *@date : 2018. 9. 28.
+     *@author : 박동주
+     *@Method 설명 : 계약서 삭제
+     *@param cont_no
+     *@return
+     */
+    public int deleteCont(List<String> cont_no);
+    
+    /**
+     *@Method Name : updateContract
+     *@date : 2018. 9. 28.
+     *@author : 박동주
+     *@Method 설명 : 계약서 수정
+     *@param contVo
+     *@return
+     */
+    public int updateContract(Map<String, String> contVo);
+    
+    /**
+     * 거래처 전체 검색
+     * @return
+     */
+    public List<AccountVo> getAllAccount();
+
+    /**
+     * 여러가지 검색 조건으로  계획서 검색
+     * @return
+     */
+    public AccountVo getAccount(String acc);
+    
+    /**
+     * 상영스케줄 전체 검색
+     * @return
+     */
+    public List<ScheduleVo> getAllSchedule();
+
+    /**
+     * 여러가지 검색 조건으로 상영스케줄 검색
+     * @return
+     */
+    public ScheduleVo getSchedule(String sche);
+    
+    /**
+     * 계약건 수입관리 전체 검색
+     * @return
+     */
+    public List<ImportVo> getImport();
+
+    /**
+     * 여러가지 검색 조건으로 계약건 수입관리 검색
+     * @return
+     */
+    public List<ImportVo> getImport(Map<String, String> impoVo);
+    
+    /**
+     * 거래명세서 전체 검색
+     * @return
+     */
+    public List<StatementVo> getStatement();
+    
+    /**
+     * 여러가지 검색 조건으로 거래명세서 검색
+     * @return
+     */
+    public List<StatementVo> getStatement(Map<String, String> stateVo);
+    
+    
+
+ 
+    /* SchedulePlan*/
+    
+	public List<SchedulePlanVo> searchSchPlan();
+	
+	public int insertSchPlan(Map<String, String> schMap) ;
+}

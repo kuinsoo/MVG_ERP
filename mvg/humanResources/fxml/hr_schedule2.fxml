@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+
+<TabPane fx:id="t1_tp_main" maxHeight="565.0" maxWidth="800.0" minHeight="565.0" minWidth="800.0" prefHeight="565.0" prefWidth="800.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="humanResources.controller.Hr_scheduleController2">
+   <tabs>
+      <Tab text="행사일정표">
+         <content>
+            <Pane fx:id="t1_pane" maxHeight="527.0" maxWidth="800.0" minHeight="527.0" minWidth="800.0" prefHeight="527.0" prefWidth="800.0">
+               <children>
+                  <Label layoutX="23.0" layoutY="14.0" text="행사일정표" textFill="#4b8f89">
+                     <font>
+                        <Font name="Malgun Gothic" size="18.0" />
+                     </font>
+                  </Label>
+               </children>
+            </Pane>
+         </content>
+      </Tab>
+   </tabs>
+</TabPane>

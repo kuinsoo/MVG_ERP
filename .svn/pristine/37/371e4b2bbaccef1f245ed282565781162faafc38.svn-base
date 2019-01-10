@@ -1,0 +1,149 @@
+package production.controller;
+
+import java.net.URL;
+import java.util.ResourceBundle;
+
+import javafx.application.Platform;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeView;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
+import javafx.stage.Stage;
+import staticMethod.windowOptions.WindowOpstions;
+
+public class MainFormController {
+
+    @FXML
+    private ResourceBundle resources;
+
+    @FXML
+    private URL location;
+
+    @FXML
+    private ImageView exit;
+
+    @FXML
+    private TreeView<String> treeView1;
+
+    @FXML
+    private ImageView btnCommon;
+
+    @FXML
+    private ImageView logOut;
+
+    @FXML
+    private ImageView btnChart;
+    
+    @FXML
+    private BorderPane bp_root;
+
+  
+    @FXML
+    void goLogin(MouseEvent event) {
+    	/* 로그아웃 기능 */
+		Stage stage = (Stage) logOut.getScene().getWindow();
+		WindowOpstions.windowLogout(stage);
+    }
+
+    @FXML
+    void goExit(MouseEvent event) {
+    	Platform.exit();
+    }
+
+    @FXML
+    void common(MouseEvent event) {
+    	/* 공통문서로 이동 */
+		WindowOpstions.windowCommDoc();
+    }
+
+    @FXML
+    void chart(MouseEvent event) {
+    	/* 차트로 이동 */
+		WindowOpstions.windowChart();
+    }
+    
+    @FXML
+    void click_treeView(MouseEvent event) {
+    	
+    	if(treeView1.getSelectionModel().getSelectedItem() == null) {
+    		
+    	}else {
+    		String selectTree = treeView1.getSelectionModel().getSelectedItem().getValue();
+    		
+    		switch (selectTree) {
+			case "생산관리":
+				changeCenter("../fxml/DeptDef_prod3.fxml");
+				break;
+			case "품질관리":
+				changeCenter("../fxml/DeptDef_qual2.fxml");
+				break;
+			case "매출관리":
+				changeCenter("../fxml/DeptDef_sale3.fxml");
+				break;
+			case "기기관리":
+				changeCenter("../fxml/DeptDef_equip3.fxml");
+				break;
+			}
+    		System.out.println(selectTree);
+    	}
+
+    }
+
+    @FXML
+    void initialize() {
+        assert exit != null : "fx:id=\"exit\" was not injected: check your FXML file 'MainForm.fxml'.";
+        assert treeView1 != null : "fx:id=\"treeView1\" was not injected: check your FXML file 'MainForm.fxml'.";
+        assert btnCommon != null : "fx:id=\"btnCommon\" was not injected: check your FXML file 'MainForm.fxml'.";
+        assert logOut != null : "fx:id=\"logOut\" was not injected: check your FXML file 'MainForm.fxml'.";
+        assert btnChart != null : "fx:id=\"btnChart\" was not injected: check your FXML file 'MainForm.fxml'.";
+        assert bp_root != null : "fx:id=\"bp_root\" was not injected: check your FXML file 'MainForm.fxml'.";
+        
+        treeViewMain();
+        
+        Platform.runLater(new Runnable() {
+			
+			@Override
+			public void run() {
+				changeCenter("../fxml/DeptDef_prod3.fxml");
+			}
+		});
+
+    }
+    
+    @SuppressWarnings("unchecked")
+	public void treeViewMain() {
+    	
+    	TreeItem<String> treeRoot = new TreeItem<String>();
+    	
+    	TreeItem<String> prodTree = new TreeItem<String>("생산관리");
+ 
+    	TreeItem<String> qualTree = new TreeItem<String>("품질관리");
+    	
+    	TreeItem<String> saleTree = new TreeItem<String>("매출관리");
+    	
+    	TreeItem<String> machineTree = new TreeItem<String>("기기관리");
+    	
+    	treeRoot.getChildren().addAll(prodTree,qualTree,saleTree,machineTree);
+    	
+    	treeView1.setShowRoot(false);
+    	treeView1.setRoot(treeRoot);
+    	
+    }
+    
+    public void changeCenter(String urlCenterFxml) {
+    	try {
+			BorderPane pane = (BorderPane) bp_root.getScene().getRoot();
+			FXMLLoader loader = new FXMLLoader(getClass().getResource(urlCenterFxml));
+			Parent retirep = loader.load();
+			pane.setCenter(retirep);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+    }
+}
+

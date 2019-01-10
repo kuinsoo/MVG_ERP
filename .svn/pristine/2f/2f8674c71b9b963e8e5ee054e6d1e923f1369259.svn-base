@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.chart.PieChart?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane fx:id="thisRoot" maxHeight="490.0" maxWidth="700.0" minHeight="490.0" minWidth="700.0" prefHeight="490.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="commonDocument.controller.ChartController">
+   <top>
+      <VBox maxHeight="105.0" maxWidth="700.0" minHeight="105.0" minWidth="700.0" prefHeight="105.0" prefWidth="700.0" BorderPane.alignment="CENTER">
+         <children>
+            <Pane maxHeight="100.0" maxWidth="700.0" minHeight="100.0" minWidth="700.0" prefHeight="100.0" prefWidth="700.0" style="-fx-background-color: #313131;">
+               <children>
+                  <Label layoutX="50.0" layoutY="24.0" text="chart" textFill="WHITE">
+                     <font>
+                        <Font name="Malgun Gothic" size="45.0" />
+                     </font>
+                  </Label>
+                  <ImageView fx:id="img_exit" fitHeight="25.0" fitWidth="25.0" layoutX="661.0" layoutY="14.0" onMouseClicked="#click_img_exit">
+                     <image>
+                        <Image url="@../../resources/icon/close64x64.png" />
+                     </image>
+                  </ImageView>
+               </children>
+            </Pane>
+            <Pane maxHeight="5.0" maxWidth="700.0" minHeight="5.0" minWidth="700.0" prefHeight="5.0" prefWidth="700.0" style="-fx-background-color: #ffd83f;" />
+         </children>
+      </VBox>
+   </top>
+   <bottom>
+      <AnchorPane maxHeight="30.0" maxWidth="700.0" minHeight="30.0" minWidth="700.0" prefHeight="30.0" prefWidth="700.0" style="-fx-background-color: #313131;" BorderPane.alignment="CENTER">
+         <children>
+            <Label layoutX="666.0" layoutY="8.0" text="Copyright ⓒ 2018. team.조조할인해조 all rights reserved." textFill="WHITE" AnchorPane.rightAnchor="20.0">
+               <font>
+                  <Font name="Malgun Gothic" size="12.0" />
+               </font>
+            </Label>
+            <Label layoutX="14.0" layoutY="8.0" text="MVG.Co." textFill="#ed1831" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="20.0">
+               <font>
+                  <Font name="Malgun Gothic Bold" size="12.0" />
+               </font>
+            </Label>
+         </children>
+      </AnchorPane>
+   </bottom>
+   <center>
+      <AnchorPane maxHeight="355.0" maxWidth="700.0" minHeight="355.0" minWidth="700.0" prefHeight="355.0" prefWidth="700.0" BorderPane.alignment="CENTER">
+         <children>
+            <PieChart fx:id="t1_pieChart" layoutY="-1.0" prefHeight="356.0" prefWidth="700.0" />
+            <Label layoutX="69.0" layoutY="24.0" text="판매량" textFill="#464646">
+               <font>
+                  <Font name="Malgun Gothic Bold" size="21.0" />
+               </font>
+            </Label>
+         </children>
+      </AnchorPane>
+   </center>
+</BorderPane>

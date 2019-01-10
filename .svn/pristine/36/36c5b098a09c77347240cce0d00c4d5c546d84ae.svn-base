@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap
+        PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+        "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<!-- 처리할 SQL문을 작성하는 문서 -->
+
+<!-- namespace속성 : 아래에서 작성한 SQL문을 호출할 때 같이 사용한다. -->
+<sqlMap namespace="mat">
+
+  <!--  material.MaterialVo 대신 matVo를 사용할 수 있다. -->
+  <typeAlias alias="matVo" type="material.vo.MaterialVo"/>
+  
+  <!--  material.MaterialCateVo 대신 matcVo를 사용할 수 있다. -->
+  <typeAlias alias="matcVo" type="material.vo.MaterialCateVo"/>
+  
+  <!-- vo.MaterialMainVo 대신 matMainVo를 사용할 수 있다. -->
+	<typeAlias alias="matMainVo" type="material.vo.MaterialMainVo" />
+	
+	<!-- vo.BuyerVo 대신 byVo를 사용할 수 있다. -->
+	<typeAlias alias="byVo" type="material.vo.BuyerVo" />
+  
+  <!-- vo.AssistantVo 대신 assVo를 사용할 수 있다. -->
+	<typeAlias alias="assVo" type="material.vo.AssistantVo" />
+
+  <!--사원 전체 검색-->
+  <select id="getAllMat" resultClass="matVo">
+	 	select * from MATERIAL
+	 </select>
+	 
+    <!--사원 하나를 여러가지 옵션으로 검색-->
+  <select id="getMatt" parameterClass="String" resultClass="matVo">
+	  select * from MATERIAL where MAT_CODE = #mat_code# or MAT_NAME like '%' || #mat_name# || '%' or MAT_BUYER = #mat_buyer# or MAT_DATE = #mat_date#
+  </select>
+  
+
+	<!-- 자재입고관리 기본테이블 -->
+	<select id="getMatWearingMain" parameterClass="String" resultClass="matMainVo">
+		select matc_name, mat_code, mat_name, buyer_name, mat_qty, mat_price, mat_uprice, mat_date, mat_note
+		from buyer inner join material on(buyer_code = mat_buyer)
+		inner join materialcate on (mat_metc = matc_code)
+		 WHERE mat_metc LIKE '%' || 'mat' || '%' 
+	</select>
+
+
+	<!--자재 하나를 여러가지 옵션으로 검색 -->
+	<select id="getMat" parameterClass="java.util.HashMap" resultClass="matMainVo">
+		select matc_name, mat_code, mat_name, buyer_name, mat_qty, mat_price, mat_uprice, mat_date, mat_note
+		from material inner join buyer on(buyer_code = mat_buyer)
+        inner join  materialcate on(mat_metc = matc_code)
+        
+		<isNotNull   prepend="where" property="matc_name" >            
+		matc_name like '%' || #matc_name# || '%'
+		</isNotNull>
+	
+		<isNotNull prepend="where" property="mat_code" >            
+		mat_code like '%' || #mat_code# || '%'
+		</isNotNull>
+		
+		<isNotNull prepend="where" property="mat_name" >            
+		mat_name like '%' || #mat_name# || '%'
+		</isNotNull>
+		
+		<isNotNull prepend="where" property="buyer_name" >            
+		buyer_name like '%' || #buyer_name# || '%'
+		</isNotNull>
+		
+		and mat_metc like '%' || 'mat' || '%'
+		
+	</select>
+
+	<!-- 자재입고 등록 -->
+	<update id="insertMatAdd" parameterClass="matVo">
+	insert into material 
+	values ( #mat_code#,#mat_metc#, #mat_buyer#, 'mdm001', #mat_date#, #mat_name# , #mat_qty#, #mat_price#, #mat_uprice#, #mat_note#, '')
+	</update>
+	
+	<!-- 입고등록시 자재분류코드 가져오는 쿼리문  -->
+	<select id="matClassificationCode" resultClass="matcVo" >
+	select * from materialcate
+	</select>
+	
+	<!-- 입고 등록시 거래처코드 가져오는 쿼리문  -->
+	<select id="matAccountCode" resultClass="byVo" >
+	select * from buyer
+	</select>
+	
+	<!-- metc 쿼리문 -->
+	<select id="getMatClassificationCode" resultClass="matcVo" >
+	select * from materialcate
+	where metc_code = #metc_code#
+	</select>
+	
+	<!-- buyer 쿼리문 -->
+	<select id="getMatAccountCode" resultClass="byVo" >
+	select * from buyer
+	where buyer_code = #buyer_code#
+	</select>
+	 
+	<!-- 자재 입고 수정 -->
+	<update id="matUpdate" parameterClass="matVo">
+	update material 
+	<!--  set mat_metc=#mat_metc#, mat_buyer=#mat_buyer#, mat_dept = #mat_dept#, mat_date=#mat_date#, mat_name=#mat_name#
+			, mat_qty=#mat_qty#, mat_price=#mat_price#, mat_uprice=#mat_uprice#
+	 이거는 만약 날짜를 수정하고싶지않을떄 널값이 들어가기때문에 문제가 발생됨돠  -->
+	<dynamic prepend="set">								 <!-- prepend는 다이나믹안에있는거를 수정하기이전에 set를 먼저 사용하라  -->
+		<isNotNull prepend="," property="mat_metc"> 	 <!-- isNotNull 은 널이아니면 안에있는 수행문을 수행 널일경우 스스로 수행하지않는다 -->
+			mat_metc = #mat_metc#						 <!-- 동적쿼리문 -->
+		</isNotNull>
+		
+		<isNotNull prepend="," property="mat_buyer">
+			mat_buyer = #mat_buyer#
+		</isNotNull>
+		
+		<isNotNull prepend="," property="mat_date">
+			mat_date = #mat_date#
+		</isNotNull>
+		
+		<isNotNull prepend="," property="mat_name">
+			mat_name = #mat_name#		
+		</isNotNull>
+		
+		<isNotNull prepend="," property="mat_qty">
+			mat_qty = #mat_qty#
+		</isNotNull>
+		
+		<isNotNull prepend="," property="mat_price">
+			mat_price = #mat_price#
+		</isNotNull>
+		
+		<isNotNull prepend="," property="mat_note">
+			mat_note = #mat_note#
+		</isNotNull>
+			,mat_dept = 'mdm001'
+	</dynamic>
+	where mat_code = #mat_code#
+	</update>
+	
+	<!-- 자재 삭제 (체크박스를 이용한 다중 삭제 허용) -->
+	<delete id="deleteMat" parameterClass="java.util.List">
+	
+		DELETE FROM material
+		<iterate open="(" close=")" conjunction ="," prepend ="where mat_code in">
+		#[]#
+		
+		</iterate>
+		
+	</delete>
+	
+	<!-- 자재수불관리 기본테이블 -->
+	<select id="getMatDeferentMain" resultClass="assVo">
+        select matc_name, ast_mat, ast_no, ast_name, buyer_name, ast_qty, ast_date, ast_note
+		from material inner join buyer on(buyer_code = mat_buyer)
+        inner join assistant on (ast_mat = mat_code)
+        inner join materialcate on (mat_metc = matc_code)
+	</select>
+	
+	
+	<!-- 자재수불 등록 -->
+	<update id="insertAstAdd" parameterClass="assVo">
+	insert into assistant 
+	values ( #ast_no#, #ast_mat#, #ast_date#, #ast_name#, #ast_qty# , #ast_note# )
+	</update>
+	
+	
+	<!-- 자재 수불 수정 -->
+	<update id="assUpdate" parameterClass="assVo">
+	update assistant
+	
+	<dynamic prepend="set">								 
+		<isNotNull prepend="," property="mat_metc"> 	 
+			mat_metc = #mat_metc#						 
+		</isNotNull>
+		
+		<isNotNull prepend="," property="ast_mat">
+			ast_mat = #ast_mat#
+		</isNotNull>
+		
+		<isNotNull prepend="," property="ast_no">
+			ast_no = #ast_no#
+		</isNotNull>
+		
+		<isNotNull prepend="," property="ast_name">
+			ast_name = #ast_name#		
+		</isNotNull>
+		
+		<isNotNull prepend="," property="buyer_name">
+			buyer_name = #buyer_name#
+		</isNotNull>
+		
+		<isNotNull prepend="," property="ast_qty">
+			ast_qty = #ast_qty#
+		</isNotNull>
+		
+		<isNotNull prepend="," property="ast_date">
+			ast_date = #ast_date#
+		</isNotNull>
+		
+		<isNotNull prepend="," property="ast_note">
+			ast_note = #ast_note#
+		</isNotNull>
+		
+	</dynamic>
+	where ast_no = #ast_no#
+	</update>
+	
+	
+	<!-- 수불 삭제 (체크박스를 이용한 다중 삭제 허용) -->
+	<delete id="deleteAss" parameterClass="java.util.List">
+	
+		DELETE FROM assistant
+		<iterate open="(" close=")" conjunction ="," prepend ="where ast_no in">
+		#[]#
+		
+		</iterate>
+		
+	</delete>
+	
+	<!-- 수불 하나를 여러가지 옵션으로 검색 -->
+	<select id="getAst" parameterClass="java.util.HashMap" resultClass="assVo">
+	select matc_name, ast_mat, ast_no, ast_name, buyer_name, ast_qty, ast_date, ast_note
+		from material inner join buyer on(buyer_code = mat_buyer)
+         inner join assistant on (ast_mat = mat_code)
+         inner join  materialcate on (mat_metc = matc_code)
+         
+		<isNotNull   prepend="where" property="matc_name" >
+		matc_name like '%' || #matc_name# || '%'
+		</isNotNull>
+		
+		<isNotNull   prepend="where" property="ast_mat" >
+		ast_mat like '%' || #ast_mat# || '%'
+		</isNotNull>
+		
+		<isNotNull   prepend="where" property="ast_name" >
+		ast_name like '%' || #ast_name#  || '%'
+		</isNotNull>
+		
+		<isNotNull   prepend="where" property="buyer_name" >
+		buyer_name like '%' || #buyer_name# || '%'
+		</isNotNull>
+	</select>
+	
+	
+		<!-- 물품관리 기본테이블 -->
+		<select id="getMatArticle" parameterClass="String" resultClass="matMainVo">
+			select matc_name, mat_code, mat_name, buyer_name, mat_qty, mat_price, mat_uprice, mat_date
+			from material inner join buyer on(buyer_code = mat_buyer)
+			inner join materialcate on (mat_metc = matc_code)
+	        WHERE mat_metc LIKE '%' || 'atc' || '%'
+		</select>
+	
+	
+		<!-- 물품 등록 -->
+		<update id="insertArticleAdd" parameterClass="matVo">
+		insert into material 
+		values ( #mat_code#,#mat_metc#, #mat_buyer#, 'mdm001', #mat_date#, #mat_name# , #mat_qty#, #mat_price#, #mat_uprice#, #mat_note#, '')
+		</update>
+		
+		<!-- 물품 수정 -->
+		<update id="articleUpdate" parameterClass="matVo">
+		update material 
+		
+		<dynamic prepend="set">								 <!-- prepend는 다이나믹안에있는거를 수정하기이전에 set를 먼저 사용하라  -->
+			<isNotNull prepend="," property="mat_metc"> 	 <!-- isNotNull 은 널이아니면 안에있는 수행문을 수행 널일경우 스스로 수행하지않는다 -->
+				mat_metc = #mat_metc#						 <!-- 동적쿼리문 -->
+			</isNotNull>
+			
+			<isNotNull prepend="," property="mat_buyer">
+				mat_buyer = #mat_buyer#
+			</isNotNull>
+			
+			<isNotNull prepend="," property="mat_date">
+				mat_date = #mat_date#
+			</isNotNull>
+			
+			<isNotNull prepend="," property="mat_name">
+				mat_name = #mat_name#		
+			</isNotNull>
+			
+			<isNotNull prepend="," property="mat_qty">
+				mat_qty = #mat_qty#
+			</isNotNull>
+			
+			<isNotNull prepend="," property="mat_price">
+				mat_price = #mat_price#
+			</isNotNull>
+			
+			<isNotNull prepend="," property="mat_note">
+				mat_note = #mat_note#
+			</isNotNull>
+				,mat_dept = 'mdm001'
+		</dynamic>
+		where mat_code = #mat_code#
+		</update>
+		
+		<!-- 물품 삭제 (체크박스를 이용한 다중 삭제 허용) -->
+		<delete id="deleteArticle" parameterClass="java.util.List">
+		
+			DELETE FROM material
+			<iterate open="(" close=")" conjunction ="," prepend ="where mat_code in">
+			#[]#
+			
+			</iterate>
+			
+		</delete>
+		
+		<!-- 물품 하나를 여러가지 옵션으로 검색 -->
+		<select id="getAct" parameterClass="java.util.HashMap" resultClass="matMainVo">
+			select  matc_name, mat_code, mat_name, buyer_name, mat_qty, mat_price, mat_uprice, mat_date
+			from material inner join buyer on(buyer_code = mat_buyer)
+			inner join materialcate on (mat_metc = matc_code)
+			<isNotNull   prepend="where" property="matc_name" >
+			matc_name like '%' || #matc_name# || '%'
+			</isNotNull>
+			
+			<isNotNull   prepend="where" property="mat_code" >
+			mat_code like '%' || #mat_code# || '%'
+			</isNotNull>
+			
+			<isNotNull   prepend="where" property="mat_name" >
+			mat_name like '%' || #mat_name# || '%'
+			</isNotNull>
+			
+			<isNotNull   prepend="where" property="buyer_name" >
+			buyer_name like '%' || #buyer_name# || '%'
+			</isNotNull>
+			and mat_metc like '%' || 'atc' || '%'
+		</select>
+		
+</sqlMap>

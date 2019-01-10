@@ -1,0 +1,105 @@
+package outsourcing.controller;
+
+import java.io.IOException;
+import java.net.URL;
+import java.time.LocalDate;
+import java.util.ResourceBundle;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.stage.Stage;
+import outsourcing.service.OutsourcingService;
+import outsourcing.vo.ContractVo;
+import staticMethod.alert.AlertWindow;
+import staticMethod.codemaker.Codemaker;
+import staticMethod.comboBox.ComboList;
+
+public class DeptOutSrcContractPopUpController {
+	
+	private OutsourcingService outsrcService = OutsourcingService.getInstance();
+
+    @FXML
+    private ResourceBundle resources;
+
+    @FXML
+    private URL location;
+
+    @FXML
+    private Tab t1;
+
+    @FXML
+    private TextField t1_tf;
+
+    @FXML
+    private DatePicker t1_tf2;
+
+    @FXML
+    private TextArea t1_tf3;
+
+    @FXML
+    private Button t1_btn_search;
+
+    @FXML
+    private Button t1_btn_cancel;
+
+    @FXML
+    private ComboBox<String> t1_cb;
+
+    @FXML
+    void click_t1_btn_cancel(ActionEvent event) throws IOException {
+    	Stage thisStage = (Stage)t1_btn_cancel.getScene().getWindow();
+    	thisStage.close();
+    }
+
+    @FXML
+    void click_t1_btn_search(ActionEvent event) {
+    	try {
+    		Stage primaryStage = (Stage)t1_btn_search.getScene().getWindow();
+    		
+    		if(t1_tf.getText().isEmpty() == true || t1_tf2.getValue() == null 
+    				|| t1_tf3.getText().isEmpty() == true) {
+    			
+    			AlertWindow.errorAlert("값 입력", "모두 알맞게 입력해주세요.");
+    		}
+    		
+    		System.out.println(Codemaker.cont_code());
+    		ContractVo contVo = new ContractVo();
+    		contVo.setCont_no(Codemaker.cont_code());
+    		contVo.setCont_plan(t1_cb.getValue().toString());
+    		contVo.setCont_name(t1_tf.getText());
+    		contVo.setCont_date(LocalDate.now().toString());
+    		contVo.setCont_cdate(t1_tf2.getValue().toString());
+    		contVo.setCont_note(t1_tf3.getText());
+    		
+    		int cnt = outsrcService.insertContract(contVo);
+    		if(cnt > 0) {
+    			AlertWindow.SucceedAlert(primaryStage);
+    			primaryStage.close();
+    		}else{
+    			AlertWindow.FailedAlert(primaryStage);
+    			primaryStage.close();
+    		}
+			
+		} catch (Exception e) {
+			
+		}
+    }
+
+    @FXML
+    void initialize() {
+    	  assert t1 != null : "fx:id=\"t1\" was not injected: check your FXML file 'DeptOutSrcContractPopUp.fxml'.";
+          assert t1_tf != null : "fx:id=\"t1_tf\" was not injected: check your FXML file 'DeptOutSrcContractPopUp.fxml'.";
+          assert t1_tf2 != null : "fx:id=\"t1_tf2\" was not injected: check your FXML file 'DeptOutSrcContractPopUp.fxml'.";
+          assert t1_tf3 != null : "fx:id=\"t1_tf3\" was not injected: check your FXML file 'DeptOutSrcContractPopUp.fxml'.";
+          assert t1_btn_search != null : "fx:id=\"t1_btn_search\" was not injected: check your FXML file 'DeptOutSrcContractPopUp.fxml'.";
+          assert t1_btn_cancel != null : "fx:id=\"t1_btn_cancel\" was not injected: check your FXML file 'DeptOutSrcContractPopUp.fxml'.";
+          assert t1_cb != null : "fx:id=\"t1_cb\" was not injected: check your FXML file 'DeptOutSrcContractPopUp.fxml'.";
+
+          t1_cb.setItems(ComboList.searchContCombo());
+    }
+}

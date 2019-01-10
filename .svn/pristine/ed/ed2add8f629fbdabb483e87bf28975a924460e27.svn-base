@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap
+        PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+        "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<!-- 처리할 SQL문을 작성하는 문서 -->
+
+<!-- namespace속성 : 아래에서 작성한 SQL문을 호출할 때 같이 사용한다. -->
+<sqlMap namespace="schEmp">
+	<typeAlias alias="schEmpVo" type="humanResources.vo.ScheduleEmpVo"/>
+	
+ 	<select id="searchSch" resultClass="schEmpVo">
+ 		select * from SCHEDULEEMP
+ 	</select>
+ 	
+ 	<update id="insertSch" parameterClass="java.util.HashMap">
+ 		MERGE INTO SCHEDULEEMP
+		USING DUAL
+		ON (schemp_date = #schemp_date#)
+		WHEN MATCHED THEN
+		UPDATE SET 
+		    schemp_note1 = nvl(#schemp_note1#, ' '),
+		    schemp_note2 = nvl(#schemp_note2#, ' '),
+		    schemp_note3 = nvl(#schemp_note3#, ' '),
+		    schemp_note4 = nvl(#schemp_note4#, ' ')
+		WHEN NOT MATCHED then
+			INSERT (schemp_date, schemp_note1, schemp_note2, schemp_note3, schemp_note4) 
+			VALUES (#schemp_date#, nvl(#schemp_note1#, ' '), nvl(#schemp_note2#, ' '), nvl(#schemp_note3#, ' '), nvl(#schemp_note4#, ' ') )
+ 	</update>
+  
+ </sqlMap>

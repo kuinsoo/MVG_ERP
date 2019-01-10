@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMapConfig
+        PUBLIC "-//ibatis.apache.org//DTD SQL Map Config 2.0//EN"
+        "http://ibatis.apache.org/dtd/sql-map-config-2.dtd">
+
+<sqlMapConfig>
+  <!-- DB와 연결하는 정보를 properties파일에 설정해 놓고 이 properties파일의 내용을 읽어와 설정한다 -->
+  <properties resource="resources/sqlMap/sqlMapConfig.properties" />
+
+  <settings cacheModelsEnabled="true"
+            lazyLoadingEnabled="true"
+            enhancementEnabled="true"
+            maxRequests="32"
+            maxSessions="10"
+            maxTransactions="5"
+            useStatementNamespaces="true"	/>
+
+  <!--
+  DB와 연결을 처리하는 부분
+   -->
+
+  <transactionManager type="JDBC">
+    <dataSource type="SIMPLE">
+      <property name="JDBC.Driver" value="${driver}" />
+      <property name="JDBC.ConnectionURL" value="${url}" />
+      <property name="JDBC.Username" value="${user}"/>
+      <property name="JDBC.Password" value="${password}" />
+    </dataSource>
+  </transactionManager>
+
+  <!-- SQL문을 처리하는 부분은 xml 문서로 따로 만들어서 이 문서를 읽어와 적용하도록 설정한다.
+  예) <sqlMap resource= "경로명/파일명.xml" />
+   -->
+	
+	<!-- 인사부 쿼리 라인  -->
+	<sqlMap resource="humanResources/xml/employee.xml" />
+	<sqlMap resource="humanResources/xml/attended.xml" />
+	<sqlMap resource="humanResources/xml/schedule.xml" />
+	<sqlMap resource="humanResources/xml/salary.xml" />
+	<!-- 인사부 쿼리 끝  -->
+	
+ 	<sqlMap resource="material/xml/matarial.xml" />
+ 	<sqlMap resource="production/xml/production.xml" />
+ 	
+ 	<sqlMap resource="outsourcing/xml/outsourcing.xml" />
+ 	<sqlMap resource="outsourcing/xml/schedule2.xml" />
+ 	
+ 	<sqlMap resource="commonDocument/xml/commonDoc.xml" />
+ 	<sqlMap resource="systemAdministration/xml/sysAdmin.xml" />
+
+</sqlMapConfig>

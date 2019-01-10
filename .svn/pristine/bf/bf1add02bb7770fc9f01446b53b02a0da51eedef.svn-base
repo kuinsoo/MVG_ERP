@@ -1,0 +1,7 @@
+##  Class.ForName()
+driver  = oracle.jdbc.driver.OracleDriver
+
+## Database Connect info
+url     = jdbc:oracle:thin:@112.220.114.130:1521:XE
+user    = MVG
+password= java

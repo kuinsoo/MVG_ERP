@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="500.0" maxWidth="600.0" minHeight="500.0" minWidth="600.0" prefHeight="500.0" prefWidth="600.0" style="-fx-border-color: #ffffff;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="humanResources.controller.Hr_empList_addController">
+   <top>
+      <AnchorPane maxHeight="50.0" maxWidth="598.0" minHeight="50.0" minWidth="598.0" prefHeight="50.0" prefWidth="598.0" style="-fx-background-color: #000000;" BorderPane.alignment="CENTER" />
+   </top>
+   <bottom>
+      <AnchorPane maxHeight="10.0" maxWidth="598.0" minHeight="10.0" minWidth="598.0" prefHeight="10.0" prefWidth="598.0" style="-fx-background-color: #000000;" BorderPane.alignment="CENTER" />
+   </bottom>
+   <right>
+      <AnchorPane maxHeight="440.0" maxWidth="598.0" minHeight="440.0" minWidth="598.0" prefHeight="440.0" prefWidth="598.0" style="-fx-background-color: #e4e4e4;" BorderPane.alignment="CENTER">
+         <children>
+            <Label layoutX="50.0" layoutY="38.0" text="새로운 사원 등록" textFill="#313131">
+               <font>
+                  <Font name="Malgun Gothic Bold" size="18.0" />
+               </font>
+            </Label>
+            <Label layoutX="51.0" layoutY="105.0" text="직     급 :">
+               <font>
+                  <Font name="Malgun Gothic" size="15.0" />
+               </font>
+            </Label>
+            <Label layoutX="51.0" layoutY="149.0" text="이     름 :">
+               <font>
+                  <Font name="Malgun Gothic" size="15.0" />
+               </font>
+            </Label>
+            <TextField fx:id="tf_name" layoutX="129.0" layoutY="148.0" maxHeight="28.0" maxWidth="150.0" minHeight="28.0" minWidth="150.0" prefHeight="28.0" prefWidth="150.0" promptText="이름" style="-fx-background-color: #ffffff;" />
+            <Label layoutX="51.0" layoutY="192.0" text="연 락 처 :">
+               <font>
+                  <Font name="Malgun Gothic" size="15.0" />
+               </font>
+            </Label>
+            <TextField fx:id="tf_hp" layoutX="129.0" layoutY="190.0" maxHeight="28.0" maxWidth="150.0" minHeight="28.0" minWidth="150.0" prefHeight="28.0" prefWidth="150.0" promptText="핸드폰번호" style="-fx-background-color: #ffffff;" />
+            <Label layoutX="51.0" layoutY="234.0" text="주     소 :">
+               <font>
+                  <Font name="Malgun Gothic" size="15.0" />
+               </font>
+            </Label>
+            <TextField fx:id="tf_addr" layoutX="129.0" layoutY="232.0" maxHeight="28.0" maxWidth="410.0" minHeight="28.0" minWidth="400.0" prefHeight="28.0" prefWidth="410.0" promptText="주소" style="-fx-background-color: #ffffff;" />
+            <Label layoutX="51.0" layoutY="277.0" text="성     별 :">
+               <font>
+                  <Font name="Malgun Gothic" size="15.0" />
+               </font>
+            </Label>
+            <Button fx:id="btn_add" layoutX="207.0" layoutY="382.0" maxHeight="28.0" maxWidth="60.0" minHeight="28.0" minWidth="60.0" mnemonicParsing="false" onAction="#click_btn_add" prefHeight="28.0" prefWidth="60.0" style="-fx-background-color: #131313;" text="등록" textFill="WHITE" />
+            <Button fx:id="btn_cancel" layoutX="322.0" layoutY="382.0" maxHeight="28.0" maxWidth="60.0" minHeight="28.0" minWidth="60.0" mnemonicParsing="false" onAction="#click_btn_cancel" prefHeight="28.0" prefWidth="60.0" style="-fx-background-color: #131313;" text="취소" textFill="WHITE" />
+            <Label layoutX="306.0" layoutY="105.0" text="부      서 :">
+               <font>
+                  <Font name="Malgun Gothic" size="15.0" />
+               </font>
+            </Label>
+            <TextField fx:id="tf_pass" layoutX="387.0" layoutY="148.0" maxHeight="28.0" maxWidth="150.0" minHeight="28.0" minWidth="150.0" prefHeight="28.0" prefWidth="150.0" promptText="비밀번호" style="-fx-background-color: #ffffff;" />
+            <Label layoutX="306.0" layoutY="149.0" text="비밀번호 :">
+               <font>
+                  <Font name="Malgun Gothic" size="15.0" />
+               </font>
+            </Label>
+            <TextField fx:id="tf_regno1" layoutX="387.0" layoutY="190.0" maxHeight="28.0" maxWidth="70.0" minHeight="28.0" minWidth="70.0" prefHeight="28.0" prefWidth="70.0" promptText="생년월일" style="-fx-background-color: #ffffff;" />
+            <Label layoutX="306.0" layoutY="192.0" text="주민번호 :">
+               <font>
+                  <Font name="Malgun Gothic" size="15.0" />
+               </font>
+            </Label>
+            <Label layoutX="306.0" layoutY="278.0" text="입 사 일 :">
+               <font>
+                  <Font name="Malgun Gothic" size="15.0" />
+               </font>
+            </Label>
+            <TextField fx:id="tf_regno2" layoutX="467.0" layoutY="190.0" maxHeight="28.0" maxWidth="70.0" minHeight="28.0" minWidth="70.0" prefHeight="28.0" prefWidth="70.0" promptText="뒷번호" style="-fx-background-color: #ffffff;" />
+            <ComboBox fx:id="cb_pos" layoutX="129.0" layoutY="105.0" maxHeight="28.0" maxWidth="150.0" minHeight="28.0" minWidth="150.0" onAction="#change_cb_pos" prefHeight="28.0" prefWidth="150.0" promptText="직급" style="-fx-background-color: #ffffff;" />
+            <ComboBox fx:id="cb_dept" layoutX="387.0" layoutY="105.0" maxHeight="28.0" maxWidth="150.0" minHeight="28.0" minWidth="150.0" onAction="#change_cb_dept" prefHeight="28.0" prefWidth="150.0" promptText="부서" style="-fx-background-color: #ffffff;" />
+            <DatePicker fx:id="dp_hdate" layoutX="382.0" layoutY="275.0" maxHeight="28.0" maxWidth="155.0" minHeight="28.0" minWidth="150.0" prefHeight="28.0" prefWidth="155.0" promptText="입사일" style="-fx-background-color: #ffffff;" />
+            <ComboBox fx:id="cb_gender" layoutX="129.0" layoutY="275.0" maxHeight="28.0" maxWidth="150.0" minHeight="28.0" minWidth="150.0" onAction="#chagne_cb_gender" prefHeight="28.0" prefWidth="150.0" promptText="성별" style="-fx-background-color: #ffffff;" />
+            <TextField fx:id="tf_note" layoutX="129.0" layoutY="317.0" maxHeight="28.0" maxWidth="412.0" minHeight="28.0" minWidth="400.0" prefHeight="28.0" prefWidth="412.0" promptText="비고" style="-fx-background-color: #ffffff;" />
+            <Label layoutX="51.0" layoutY="320.0" text="비     고 :">
+               <font>
+                  <Font name="Malgun Gothic" size="15.0" />
+               </font>
+            </Label>
+         </children>
+         <BorderPane.margin>
+            <Insets />
+         </BorderPane.margin>
+      </AnchorPane>
+   </right>
+</BorderPane>

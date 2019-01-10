@@ -1,0 +1,232 @@
+package outsourcing.controller;
+
+import java.io.IOException;
+import java.net.URL;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.ResourceBundle;
+import java.util.Set;
+
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import outsourcing.service.IOutsourcingService;
+import outsourcing.service.OutsourcingService;
+import outsourcing.vo.ContractVo;
+import outsourcing.vo.PlanningVo;
+import staticMethod.alert.AlertWindow;
+
+public class DeptOutSrcContractController {
+	
+	private IOutsourcingService outsourcingService = OutsourcingService.getInstance();
+	private ObservableList<ContractVo> ContractList = FXCollections.observableArrayList(outsourcingService.getAllContract());
+	private List<ContractVo> contList = outsourcingService.getAllContract();
+
+    @FXML
+    private ResourceBundle resources;
+
+    @FXML
+    private URL location;
+
+    @FXML
+    private Tab t1;
+
+    @FXML
+    private ComboBox<String> t1_cb;
+
+    @FXML
+    private TextField t1_tf_search;
+
+    @FXML
+    private Button t1_btn_search;
+
+    @FXML
+    private TableView<ContractVo> t1_tv;
+    
+    @FXML
+    private TableColumn<?, ?> t1_col_chk;
+
+    @FXML
+    private CheckBox t1_chk;
+
+    @FXML
+    private TableColumn<?, ?> t1_col_cont_plan;
+
+    @FXML
+    private TableColumn<?, ?> t1_col_cont_cdate;
+
+    @FXML
+    private TableColumn<?, ?> t1_col_cont_name;
+
+    @FXML
+    private TableColumn<?, ?> t1_col_cont_note;
+
+    @FXML
+    private Button btnSearchM1;
+
+    @FXML
+    private Button btnSearchM2;
+
+    @FXML
+    private Button t1_btn_add;
+
+    @FXML
+    private Button t1_btn_delete;
+
+    @FXML
+    void click_t1_btn_add(ActionEvent event) {
+    	
+    	try {
+    		Stage deptOutSrcListStage = (Stage)t1_btn_add.getParent().getScene().getWindow();
+			Parent root = FXMLLoader.load(getClass().getResource("../fxml/DeptOutSrcContractPopUp.fxml"));
+			Stage deptOutSrcListAddStage = new Stage();
+			
+			deptOutSrcListAddStage.initModality(Modality.WINDOW_MODAL);
+			deptOutSrcListAddStage.initOwner(deptOutSrcListStage);
+			Scene scene = new Scene(root);
+			deptOutSrcListAddStage.setScene(scene);
+			deptOutSrcListAddStage.show();
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+    	outsourcingService = OutsourcingService.getInstance();
+    	ContractList = FXCollections.observableArrayList(outsourcingService.getAllContract());
+		
+		t1_tv.setItems(ContractList);
+    	
+    }
+
+    @FXML
+    void click_t1_btn_delete(ActionEvent event) {
+    	Stage primaryStage = (Stage)t1_btn_search.getScene().getWindow();
+    	
+    	List<ContractVo> contList2 = t1_tv.getItems();
+    	List<String> chkList = new ArrayList<String>();
+    	for (ContractVo contractVo : contList2) {
+			if(contractVo.getCont_chk().isSelected()) {
+				chkList.add(contractVo.getCont_no());
+				System.out.println(contractVo.getCont_no());
+			}
+		}
+    	int cnt = outsourcingService.deleteCont(chkList);
+    	if(cnt > 0) {
+    		AlertWindow.SucceedAlert(primaryStage);
+    	}else {
+    		AlertWindow.FailedAlert(primaryStage);
+    	}
+    	
+    	List<ContractVo> contList = outsourcingService.getAllContract();
+    	
+		ObservableList<ContractVo> ee = FXCollections.observableArrayList(contList);
+		t1_tv.setItems(ee);
+    }
+
+    @FXML
+    void click_t1_btn_search(ActionEvent event) {
+    	Map<String, String> contMap = new HashMap<String, String>();
+    	if(t1_cb.getValue().toString().equals("기획명")) {
+    		contMap.put("cont_no", t1_tf_search.getText());
+    		
+		}else if(t1_cb.getValue().toString().equals("작성자")) {
+			contMap.put("cont_name", t1_tf_search.getText());
+			
+		}
+    	List<ContractVo> contList = outsourcingService.getContract(contMap);
+    	
+    	if(contList.size() == 0) {
+			AlertWindow.infoAlert("Failed", "결과 값이 존재하지 않습니다.");
+		}else {
+    	
+		ObservableList<ContractVo> ee = FXCollections.observableArrayList(contList);
+		t1_tv.setItems(ee);
+		
+		}
+    }
+
+    @FXML
+    void goSearchM(ActionEvent event) {
+    	
+    }
+    
+    @FXML
+    void click_t1_tv(MouseEvent event) {
+    	ContractVo contractVo =  null;
+    	if(event.getClickCount() > 1) {
+
+    		contractVo = t1_tv.getSelectionModel().getSelectedItem();
+			try {
+				FXMLLoader loader = new FXMLLoader(getClass().getResource("../fxml/DeptOutSrcContractUpdatePopUp.fxml"));
+				Parent root = loader.load();
+				DeptOutSrcContractUpdatePopUpController updateController = loader.getController();
+				int year = Integer.parseInt(contractVo.getCont_cdate().substring(0,4));
+				int month = Integer.parseInt(contractVo.getCont_cdate().substring(5,7));
+				int day = Integer.parseInt(contractVo.getCont_cdate().substring(8,10));
+				LocalDate currentTime = LocalDate.now();
+				LocalDate targetTime = currentTime.withYear(year).withMonth(month).withDayOfMonth(day);
+				System.out.println(targetTime.toString());
+				updateController.getCont(contractVo, targetTime);
+				Stage deptOutSrcListUpdateStage = new Stage();
+				deptOutSrcListUpdateStage.initModality(Modality.APPLICATION_MODAL);
+				Scene scene = new Scene(root);
+				deptOutSrcListUpdateStage.setScene(scene);
+				deptOutSrcListUpdateStage.showAndWait();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			outsourcingService = OutsourcingService.getInstance();
+			ContractList = FXCollections.observableArrayList(outsourcingService.getAllContract());
+			
+			t1_tv.setItems(ContractList);
+    	}
+    }
+
+    @FXML
+    void initialize() {
+        assert t1 != null : "fx:id=\"t1\" was not injected: check your FXML file 'DeptOutSrcContract.fxml'.";
+        assert t1_cb != null : "fx:id=\"t1_cb\" was not injected: check your FXML file 'DeptOutSrcContract.fxml'.";
+        assert t1_tf_search != null : "fx:id=\"t1_tf_search\" was not injected: check your FXML file 'DeptOutSrcContract.fxml'.";
+        assert t1_btn_search != null : "fx:id=\"t1_btn_search\" was not injected: check your FXML file 'DeptOutSrcContract.fxml'.";
+        assert t1_tv != null : "fx:id=\"t1_tv\" was not injected: check your FXML file 'DeptOutSrcContract.fxml'.";
+        assert t1_col_chk != null : "fx:id=\"t1_col_chk\" was not injected: check your FXML file 'DeptOutSrcContract.fxml'.";
+        assert t1_chk != null : "fx:id=\"t1_chk\" was not injected: check your FXML file 'DeptOutSrcContract.fxml'.";
+        assert t1_col_cont_plan != null : "fx:id=\"t1_col_cont_plan\" was not injected: check your FXML file 'DeptOutSrcContract.fxml'.";
+        assert t1_col_cont_cdate != null : "fx:id=\"t1_col_cont_cdate\" was not injected: check your FXML file 'DeptOutSrcContract.fxml'.";
+        assert t1_col_cont_name != null : "fx:id=\"t1_col_cont_name\" was not injected: check your FXML file 'DeptOutSrcContract.fxml'.";
+        assert t1_col_cont_note != null : "fx:id=\"t1_col_cont_note\" was not injected: check your FXML file 'DeptOutSrcContract.fxml'.";
+        assert btnSearchM1 != null : "fx:id=\"btnSearchM1\" was not injected: check your FXML file 'DeptOutSrcContract.fxml'.";
+        assert btnSearchM2 != null : "fx:id=\"btnSearchM2\" was not injected: check your FXML file 'DeptOutSrcContract.fxml'.";
+        assert t1_btn_add != null : "fx:id=\"t1_btn_add\" was not injected: check your FXML file 'DeptOutSrcContract.fxml'.";
+        assert t1_btn_delete != null : "fx:id=\"t1_btn_delete\" was not injected: check your FXML file 'DeptOutSrcContract.fxml'.";
+        
+        t1_cb.getItems().addAll("계약번호", "작성자");
+        
+        t1_tv.setItems(ContractList);
+        
+        t1_cb.getSelectionModel().selectFirst(); // 처음값으로 셋팅해줌
+
+        t1_col_chk.setCellValueFactory(new PropertyValueFactory<>("cont_chk"));
+        t1_col_cont_plan.setCellValueFactory(new PropertyValueFactory<>("cont_plan"));
+		t1_col_cont_cdate.setCellValueFactory(new PropertyValueFactory<>("cont_cdate"));
+		t1_col_cont_name.setCellValueFactory(new PropertyValueFactory<>("cont_name"));
+		t1_col_cont_note.setCellValueFactory(new PropertyValueFactory<>("cont_note"));
+    }
+}

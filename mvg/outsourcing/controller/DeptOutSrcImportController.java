@@ -1,0 +1,242 @@
+package outsourcing.controller;
+
+import java.net.URL;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.ResourceBundle;
+
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
+import outsourcing.service.IOutsourcingService;
+import outsourcing.service.OutsourcingService;
+import outsourcing.vo.ImportVo;
+import outsourcing.vo.StatementVo;
+import staticMethod.alert.AlertWindow;
+
+public class DeptOutSrcImportController {
+	
+	private IOutsourcingService outsourcingService = OutsourcingService.getInstance();
+	private ObservableList<ImportVo> importList = FXCollections.observableArrayList(outsourcingService.getImport());
+	
+	private IOutsourcingService outsourcingService1 = OutsourcingService.getInstance();
+	private ObservableList<StatementVo> stateList = FXCollections.observableArrayList(outsourcingService1.getStatement());
+
+    @FXML
+    private ResourceBundle resources;
+
+    @FXML
+    private URL location;
+
+    @FXML
+    private Tab t1;
+
+    @FXML
+    private ComboBox<String> t1_cb;
+
+    @FXML
+    private TextField t1_tf_search;
+
+    @FXML
+    private Button t1_btn_search;
+
+    @FXML
+    private TableView<ImportVo> t1_tv;
+
+    @FXML
+    private TableColumn<?, ?> t1_col_cont_no;
+
+    @FXML
+    private TableColumn<?, ?> t1_col_scd_scr;
+
+    @FXML
+    private TableColumn<?, ?> t1_col_scd_mov;
+
+    @FXML
+    private TableColumn<?, ?> t1_col_acc_name;
+
+    @FXML
+    private TableColumn<?, ?> t1_col_cont_dis;
+
+    @FXML
+    private Button btnSearchM1;
+
+    @FXML
+    private Button btnSearchM2;
+
+    @FXML
+    private Button t1_btn_submit;
+
+    @FXML
+    private Button t1_btn_delete;
+
+    @FXML
+    private Tab t2;
+
+    @FXML
+    private ComboBox<String> t2_cb;
+
+    @FXML
+    private TextField t2_tf;
+
+    @FXML
+    private Button t2_btn_search;
+
+    @FXML
+    private TableView<StatementVo> t2_tv;
+
+    @FXML
+    private TableColumn<?, ?> t2_col_acc_rep;
+
+    @FXML
+    private TableColumn<?, ?> t2_col_acc_name;
+
+    @FXML
+    private TableColumn<?, ?> t2_col_acc_addr;
+
+    @FXML
+    private TableColumn<?, ?> t2_col_cont_cdate;
+
+    @FXML
+    private Button btnSearchM11;
+
+    @FXML
+    private Button btnSearchM21;
+
+    @FXML
+    private Button t2_btn_delete;
+
+    @FXML
+    private Button t2_btn_add;
+    
+    @FXML
+    void click_t1_tv(MouseEvent event) {
+    	
+    }
+
+    @FXML
+    void click_t1_btn_delete(ActionEvent event) {
+
+    }
+
+    @FXML
+    void click_t1_btn_search(ActionEvent event) {
+    	Map<String, String> impoMap = new HashMap<String, String>();
+    	if(t1_cb.getValue().toString().equals("거래처명")) {
+    		impoMap.put("acc_name", t1_tf_search.getText());
+    		
+		}else if(t1_cb.getValue().toString().equals("상영관")) {
+			impoMap.put("scd_scr", t1_tf_search.getText());
+			
+		}
+    	List<ImportVo> impoList = outsourcingService.getImport(impoMap);
+    	if(impoList.size() == 0) {
+			AlertWindow.infoAlert("Failed", "결과 값이 존재하지 않습니다.");
+		}else {
+    	
+		ObservableList<ImportVo> ee = FXCollections.observableArrayList(impoList);
+		t1_tv.setItems(ee);
+		
+		}
+    }
+
+    @FXML
+    void click_t1_btn_submit(ActionEvent event) {
+    	
+    }
+
+    @FXML
+    void click_t2_btn_add(ActionEvent event) {
+    	
+    }
+
+    @FXML
+    void click_t2_btn_delete(ActionEvent event) {
+
+    }
+
+    @FXML
+    void click_t2_btn_search(ActionEvent event) {
+    	Map<String, String> stateMap = new HashMap<String, String>();
+    	if(t2_cb.getValue().toString().equals("거래처명")) {
+    		stateMap.put("acc_name", t2_tf.getText());
+		}
+    	List<StatementVo> stateList = outsourcingService.getStatement(stateMap);
+    	if(stateList.size() == 0) {
+			AlertWindow.infoAlert("Failed", "결과 값이 존재하지 않습니다.");
+		}else {
+    	
+		ObservableList<StatementVo> ee = FXCollections.observableArrayList(stateList);
+		t2_tv.setItems(ee);
+		
+		}
+    }
+    
+    @FXML
+    void click_t2_tv(MouseEvent event) {
+
+    }
+
+    @FXML
+    void goSearchM(ActionEvent event) {
+
+    }
+
+    @FXML
+    void initialize() {
+    	 assert t1 != null : "fx:id=\"t1\" was not injected: check your FXML file 'DeptOutSrcImport.fxml'.";
+         assert t1_cb != null : "fx:id=\"t1_cb\" was not injected: check your FXML file 'DeptOutSrcImport.fxml'.";
+         assert t1_tf_search != null : "fx:id=\"t1_tf_search\" was not injected: check your FXML file 'DeptOutSrcImport.fxml'.";
+         assert t1_btn_search != null : "fx:id=\"t1_btn_search\" was not injected: check your FXML file 'DeptOutSrcImport.fxml'.";
+         assert t1_tv != null : "fx:id=\"t1_tv\" was not injected: check your FXML file 'DeptOutSrcImport.fxml'.";
+         assert t1_col_cont_no != null : "fx:id=\"t1_col_cont_no\" was not injected: check your FXML file 'DeptOutSrcImport.fxml'.";
+         assert t1_col_scd_scr != null : "fx:id=\"t1_col_scd_scr\" was not injected: check your FXML file 'DeptOutSrcImport.fxml'.";
+         assert t1_col_scd_mov != null : "fx:id=\"t1_col_scd_mov\" was not injected: check your FXML file 'DeptOutSrcImport.fxml'.";
+         assert t1_col_acc_name != null : "fx:id=\"t1_col_acc_name\" was not injected: check your FXML file 'DeptOutSrcImport.fxml'.";
+         assert t1_col_cont_dis != null : "fx:id=\"t1_col_cont_dis\" was not injected: check your FXML file 'DeptOutSrcImport.fxml'.";
+         assert btnSearchM1 != null : "fx:id=\"btnSearchM1\" was not injected: check your FXML file 'DeptOutSrcImport.fxml'.";
+         assert btnSearchM2 != null : "fx:id=\"btnSearchM2\" was not injected: check your FXML file 'DeptOutSrcImport.fxml'.";
+         assert t2 != null : "fx:id=\"t2\" was not injected: check your FXML file 'DeptOutSrcImport.fxml'.";
+         assert t2_cb != null : "fx:id=\"t2_cb\" was not injected: check your FXML file 'DeptOutSrcImport.fxml'.";
+         assert t2_tf != null : "fx:id=\"t2_tf\" was not injected: check your FXML file 'DeptOutSrcImport.fxml'.";
+         assert t2_btn_search != null : "fx:id=\"t2_btn_search\" was not injected: check your FXML file 'DeptOutSrcImport.fxml'.";
+         assert t2_tv != null : "fx:id=\"t2_tv\" was not injected: check your FXML file 'DeptOutSrcImport.fxml'.";
+         assert t2_col_acc_rep != null : "fx:id=\"t2_col_acc_rep\" was not injected: check your FXML file 'DeptOutSrcImport.fxml'.";
+         assert t2_col_acc_name != null : "fx:id=\"t2_col_acc_name\" was not injected: check your FXML file 'DeptOutSrcImport.fxml'.";
+         assert t2_col_acc_addr != null : "fx:id=\"t2_col_acc_addr\" was not injected: check your FXML file 'DeptOutSrcImport.fxml'.";
+         assert t2_col_cont_cdate != null : "fx:id=\"t2_col_cont_cdate\" was not injected: check your FXML file 'DeptOutSrcImport.fxml'.";
+         assert btnSearchM11 != null : "fx:id=\"btnSearchM11\" was not injected: check your FXML file 'DeptOutSrcImport.fxml'.";
+         assert btnSearchM21 != null : "fx:id=\"btnSearchM21\" was not injected: check your FXML file 'DeptOutSrcImport.fxml'.";
+        
+        t1_cb.getItems().addAll("거래처명", "상영관");
+        
+        t2_cb.getItems().addAll("거래처명");
+
+        t1_cb.getSelectionModel().selectFirst(); // 처음값으로 셋팅해줌
+        
+        t2_cb.getSelectionModel().selectFirst(); // 처음값으로 셋팅해줌
+        
+        t1_tv.setItems(importList);
+		t1_col_cont_no.setCellValueFactory(new PropertyValueFactory<>("cont_no"));
+		t1_col_scd_scr.setCellValueFactory(new PropertyValueFactory<>("scd_scr"));
+		t1_col_scd_mov.setCellValueFactory(new PropertyValueFactory<>("scd_mov"));
+		t1_col_acc_name.setCellValueFactory(new PropertyValueFactory<>("acc_name"));
+		t1_col_cont_dis.setCellValueFactory(new PropertyValueFactory<>("cont_dis"));
+		
+		t2_tv.setItems(stateList);
+		t2_col_acc_rep.setCellValueFactory(new PropertyValueFactory<>("acc_rep"));
+		t2_col_acc_name.setCellValueFactory(new PropertyValueFactory<>("acc_name"));
+		t2_col_acc_addr.setCellValueFactory(new PropertyValueFactory<>("acc_addr"));
+		t2_col_cont_cdate.setCellValueFactory(new PropertyValueFactory<>("cont_cdate"));
+    }
+}

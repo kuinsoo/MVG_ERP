@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap
+        PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+        "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<!-- 처리할 SQL문을 작성하는 문서 -->
+
+<!-- namespace속성 : 아래에서 작성한 SQL문을 호출할 때 같이 사용한다. -->
+<sqlMap namespace="out">
+
+  <!--  basic.MemberVO 대신 memVo를 사용할 수 있다. -->
+  <typeAlias alias="planVo" type="outsourcing.vo.PlanningVo"/>
+  <!-- <typeAlias alias="contVo" type="outsourcing.vo.ContractVo"/> -->
+  
+  <typeAlias alias="contVo" type="outsourcing.vo.ContractVo"/>
+  
+  <typeAlias alias="accVo" type="outsourcing.vo.AccountVo"/>
+
+  <typeAlias alias="scheVo" type="outsourcing.vo.ScheduleVo"/>
+
+  <typeAlias alias="impoVo" type="outsourcing.vo.ImportVo"/>
+  
+  <typeAlias alias="stateVo" type="outsourcing.vo.StatementVo"/>
+
+  <!--기획서 전체 검색-->
+  <select id="getAllPlan" resultClass="planVo">
+	 	select * from Planning
+	 </select>
+
+    <!--기획서 하나를 여러가지 옵션으로 검색-->
+  <select id="getPlan" parameterClass="java.util.HashMap" resultClass="planVo">
+	  select plan_no, plan_acc, plan_dept, plan_title, plan_name, plan_date, plan_note from planning inner join account on plan_acc = acc_code
+	  where plan_title = #plan_title# or plan_name = #plan_name# or acc_name = #acc_name# 
+  </select>
+  
+  <!-- 기획서 수정 -->
+  <update id="updatePlan" parameterClass="java.util.HashMap">
+  	 	update planning 
+		set plan_title=#plan_title#, plan_date=#plan_date#, plan_note=#plan_note#, plan_name=#plan_name#
+		where plan_no=#plan_no#
+  </update>
+  
+  <!-- 기획서 등록 -->
+  <update id="insertPlan" parameterClass="planVo">
+		Insert Into planning
+		(plan_title, plan_acc, plan_dept, plan_date, plan_note, plan_name, plan_no)
+		Values
+		(#plan_title#, #plan_acc#, 'mdo001', #plan_date#, #plan_note#, #plan_name#, #plan_no#)
+  </update>
+  
+<!-- 외주관리부 직원 이름 가져오기 -->
+  <select id="getOutEmp" resultClass="String">
+  	Select emp_name From employee Where emp_dept = 'mdo001'
+  </select>
+  
+  
+  <!-- 기획서 삭제 (체크박스를 이용한 다중 삭제 허용) -->
+	<delete id="deletePlan" parameterClass="java.util.List">
+		delete from planning
+		<iterate open="(" close=")" conjunction=","
+			prepend="WHERE plan_no IN ">
+			#[]#
+		</iterate>
+	</delete>
+  
+  <!-- 계약서 전체 검색 -->
+   <select id="getAllCont" resultClass="contVo">
+	 	select * from Contract
+	 </select>
+	 
+  <!--  계약서 하나를 여러가지 옵션으로 검색 -->
+  <select id="getCont" parameterClass="java.util.HashMap" resultClass="contVo">
+	  select cont_no, cont_plan, cont_name, cont_cdate, cont_date, cont_dis, cont_note from contract inner join planning on cont_plan = plan_no
+	  where cont_no = #cont_no# or cont_name = #cont_name#
+  </select> 
+  
+  <!-- 계약서 등록 -->
+  <insert id="insertCont" parameterClass="contVo">
+		insert into contract
+		(cont_no, cont_plan, cont_name, cont_cdate, cont_date, cont_dis, cont_note)
+		values
+		(#cont_no#, #cont_plan#, #cont_name#, #cont_cdate#, #cont_date#, #cont_dis#, #cont_note#)
+  </insert>
+  
+  <!-- 계약서 삭제 (체크박스를 이용한 다중 삭제 허용) -->
+	<delete id="deleteCont" parameterClass="java.util.List">
+		delete from contract
+		<iterate open="(" close=")" conjunction=","
+			prepend="WHERE cont_no IN ">
+			#[]#
+		</iterate>
+	</delete>
+	
+  <!-- 기획서 수정 -->
+  <update id="updateCont" parameterClass="java.util.HashMap">
+  	 	update contract 
+		set cont_no=#cont_no#, cont_cdate=#cont_cdate#, cont_name=#cont_name#, cont_note=#cont_note#
+		where cont_no=#cont_no#
+  </update>
+  
+  <!-- 거래처 전체 검색 -->
+   <select id="getAllAcc" resultClass="accVo">
+	 	select * from Account
+	</select>
+	
+<!-- 거래처 명에 맞는 코드 가져오기 -->
+  	<select id="getAccCode" parameterClass="String" resultClass="String">
+	 	Select acc_code From Account Where acc_name = #acc_name#
+	</select>
+	 
+  <!--  거래처 하나를 여러가지 옵션으로 검색 -->
+  <select id="getAcc" parameterClass="String" resultClass="accVo">
+	  select * from account where acc_code = #plan_acc# or acc_name like '%' || #acc_name# || '%' 
+  </select>
+  
+  <!-- 상영스케줄 전체 검색 -->
+   <select id="getAllSche" resultClass="scheVo">
+	 	select * from Schedule
+	 </select>
+	 
+  <!--  상영스케줄 하나를 여러가지 옵션으로 검색 -->
+  <select id="getSche" parameterClass="String" resultClass="scheVo">
+	  select * from schedule where sche_no = #cont_no# or scd_scr like '%' || #scd_scr# || '%' 
+  </select>  
+  
+  <!-- 계약건 수입 관리 검색 -->
+  <select id="getImport"  resultClass="impoVo">
+	  select cont_no, scd_scr, scd_mov, acc_name, cont_dis from Account, planning, contract, schedule 
+	  where acc_code = plan_acc and plan_no = cont_plan and cont_no = scd_cont
+  </select>
+  
+  <!-- 계약건 수입 관리 하나 검색 -->
+  <select id="getImpo" parameterClass="java.util.HashMap" resultClass="impoVo">
+	  select cont_no, scd_scr, scd_mov, acc_name, acc_code, cont_date, cont_dis from account inner join planning on (acc_code = plan_acc) 
+	  inner join contract on (plan_no = cont_plan) 
+	  inner join schedule on (cont_no = scd_cont)
+	  where acc_name = #acc_name# or scd_scr = #scd_scr#
+  </select> 
+  
+  <!-- 거래명세서 전체 검색 -->
+  <select id="getState1" resultClass="stateVo">
+		  select acc_rep, acc_name, acc_addr, cont_cdate from account, contract, planning 
+		  where acc_code = plan_acc	and plan_no = cont_plan
+  </select>
+  
+  <!-- 거래 명세서 하나 검색 -->
+  <select id="getState" parameterClass="java.util.HashMap" resultClass="stateVo">
+	  select acc_rep, acc_name, acc_addr, cont_cdate from account inner join planning on (acc_code = plan_acc) 
+	  inner join contract on (plan_no = cont_plan) 
+	  where acc_name = #acc_name#
+  </select> 
+  
+  
+<!-- 
+  계획서 전체 검색
+  <select id="getAllCont" resultClass="contVo">
+	 	select * from contract
+	 </select>
+
+    계획서 하나를 여러가지 옵션으로 검색
+  <select id="getCont" parameterClass="String" resultClass="contVo">
+	  select * from contract where cont_no = #plan_no# or cont_name like '%' || #cont_name# || '%' 
+  </select> -->
+</sqlMap>

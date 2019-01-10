@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="500.0" maxWidth="360.0" minHeight="500.0" minWidth="360.0" prefHeight="500.0" prefWidth="360.0" style="-fx-border-color: #ffffff;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="production.controller.QualityUpdateController">
+   <top>
+      <AnchorPane maxHeight="50.0" maxWidth="358.0" minHeight="50.0" minWidth="358.0" prefHeight="50.0" prefWidth="358.0" style="-fx-background-color: #000000;" BorderPane.alignment="CENTER" />
+   </top>
+   <bottom>
+      <AnchorPane maxHeight="10.0" maxWidth="358.0" minHeight="10.0" minWidth="358.0" prefHeight="10.0" prefWidth="358.0" style="-fx-background-color: #000000;" BorderPane.alignment="CENTER" />
+   </bottom>
+   <center>
+      <AnchorPane maxHeight="440.0" maxWidth="360.0" minHeight="440.0" minWidth="360.0" prefHeight="440.0" prefWidth="360.0" style="-fx-background-color: #e4e4e4;" BorderPane.alignment="CENTER">
+         <children>
+            <Label layoutX="54.0" layoutY="31.0" text="품질 목록 수정" textFill="#313131">
+               <font>
+                  <Font name="Malgun Gothic Bold" size="18.0" />
+               </font>
+            </Label>
+            <Label layoutX="58.0" layoutY="98.0" text="생산코드 :">
+               <font>
+                  <Font name="Malgun Gothic" size="15.0" />
+               </font>
+            </Label>
+            <TextField fx:id="tf_qualCode" editable="false" layoutX="139.0" layoutY="97.0" maxHeight="28.0" maxWidth="150.0" minHeight="28.0" minWidth="150.0" prefHeight="28.0" prefWidth="150.0" style="-fx-background-color: #ffffff;" />
+            <Label layoutX="58.0" layoutY="142.0" text="상 품 명 :">
+               <font>
+                  <Font name="Malgun Gothic" size="15.0" />
+               </font>
+            </Label>
+            <TextField fx:id="tf_qualName" editable="false" layoutX="139.0" layoutY="141.0" maxHeight="28.0" maxWidth="150.0" minHeight="28.0" minWidth="150.0" prefHeight="28.0" prefWidth="150.0" style="-fx-background-color: #ffffff;" />
+            <Label layoutX="58.0" layoutY="186.0" text="생산날짜 :">
+               <font>
+                  <Font name="Malgun Gothic" size="15.0" />
+               </font>
+            </Label>
+            <Label layoutX="58.0" layoutY="229.0" text="검사날짜 :">
+               <font>
+                  <Font name="Malgun Gothic" size="15.0" />
+               </font>
+            </Label>
+            <Button fx:id="btnInsert" layoutX="98.0" layoutY="384.0" maxHeight="28.0" maxWidth="60.0" minHeight="28.0" minWidth="60.0" mnemonicParsing="false" onAction="#click_update" prefHeight="28.0" prefWidth="60.0" style="-fx-background-color: #131313;" text="수정" textFill="WHITE" />
+            <Button fx:id="bntCancel" layoutX="202.0" layoutY="384.0" maxHeight="28.0" maxWidth="60.0" minHeight="28.0" minWidth="60.0" mnemonicParsing="false" onAction="#click_cancle" prefHeight="28.0" prefWidth="60.0" style="-fx-background-color: #131313;" text="취소" textFill="WHITE" />
+            <Label layoutX="61.0" layoutY="273.0" text="품질등급 :" />
+            <Label layoutX="61.0" layoutY="317.0" text="작 성 자 :" />
+            <ComboBox fx:id="cb_qualLevel" layoutX="139.0" layoutY="268.0" maxHeight="28.0" maxWidth="150.0" minHeight="28.0" minWidth="150.0" prefHeight="28.0" prefWidth="150.0" promptText="등급선택" style="-fx-background-color: #ffffff;" />
+            <DatePicker fx:id="td_qualDate" layoutX="139.0" layoutY="226.0" maxHeight="28.0" maxWidth="150.0" minHeight="28.0" minWidth="150.0" prefHeight="28.0" prefWidth="150.0" style="-fx-background-color: #ffffff;" />
+            <TextField fx:id="tf_qualProdDate" editable="false" layoutX="139.0" layoutY="184.0" maxHeight="28.0" maxWidth="150.0" minHeight="28.0" minWidth="150.0" prefHeight="28.0" prefWidth="150.0" style="-fx-background-color: #ffffff;" />
+            <ComboBox fx:id="cb_qualWriter" layoutX="139.0" layoutY="312.0" maxHeight="28.0" maxWidth="150.0" minHeight="28.0" minWidth="150.0" prefHeight="28.0" prefWidth="150.0" promptText="사원선택" style="-fx-background-color: #ffffff;" />
+         </children>
+         <BorderPane.margin>
+            <Insets />
+         </BorderPane.margin>
+      </AnchorPane>
+   </center>
+</BorderPane>

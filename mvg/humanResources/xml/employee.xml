@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap
+        PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+        "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<!-- 처리할 SQL문을 작성하는 문서 -->
+
+<!-- namespace속성 : 아래에서 작성한 SQL문을 호출할 때 같이 사용한다. -->
+<sqlMap namespace="emp">
+
+	<!-- basic.MemberVO 대신 memVo를 사용할 수 있다. -->
+
+	<!-- 사원vo Alias -->
+	<typeAlias alias="empVo" type="humanResources.vo.EmployeeVo" />
+	<typeAlias alias="getAllNowEmpVo"
+		type="humanResources.vo.join.GetAllNowEmpVo" />
+
+	<!--사원 전체 검색 -->
+	<select id="getAllEmp" resultClass="empVo">
+		select * from EMPLOYEE
+	</select>
+
+	<!--사원 하나 검색 -->
+	<select id="getOneEmp" parameterClass="String"
+		resultClass="empVo">
+		select * from EMPLOYEE where emp_code = #emp_code#
+	</select>
+
+	<!-- 사원 하나 등록 -->
+	<update id="insertEmp" parameterClass="empVo">
+		insert into EMPLOYEE
+		(EMP_CODE, EMP_POS, EMP_DEPT, EMP_PASS, EMP_NAME,
+		EMP_HP, EMP_REGNO1,
+		EMP_REGNO2, EMP_ADDR, EMP_GENDER, EMP_HDATE,
+		EMP_REMP, EMP_NOTE)
+		values
+		(#emp_code#, #emp_pos#, #emp_dept#, #emp_pass#, #emp_name#, #emp_hp#,
+		#emp_regno1#, #emp_regno2#, #emp_addr#, #emp_gender#, #emp_hdate#,
+		#emp_remp#, #emp_note#)
+	</update>
+
+	<!-- 사원 삭제 (체크박스를 이용한 다중 삭제 허용) -->
+	<delete id="deleteEmp" parameterClass="java.util.List">
+		delete from EMPLOYEE
+		<iterate open="(" close=")" conjunction=","
+			prepend="WHERE EMP_CODE IN ">
+			#[]#
+		</iterate>
+	</delete>
+
+	<!-- 사원 한명 내용 수정 (회원정보 업데이트) -->
+	<update id="updateEmp" parameterClass="empVo">
+		update EMPLOYEE
+		set
+		EMP_POS=#emp_pos#, EMP_DEPT=#emp_dept#, EMP_PASS=#emp_pass#,
+		EMP_NAME=#emp_name#, EMP_HP=#emp_hp#, EMP_REGNO1=#emp_regno1#,
+		EMP_REGNO2=#emp_regno2#, EMP_ADDR=#emp_addr#, EMP_GENDER=#emp_gender#,
+		EMP_HDATE=#emp_hdate#, EMP_REMP=#emp_remp#, EMP_NOTE=#emp_note#
+		where
+		emp_code = #emp_code#
+	</update>
+
+	<!--현재 제직중인 사원 전체 검색 -->
+	<select id="getAllNowEmp" resultClass="getAllNowEmpVo">
+		select emp_code,
+		dept_name, pos_name, emp_name, emp_gender, emp_hdate
+		from department
+		inner join employee on (DEPT_CODE = emp_dept)
+		inner join POSITION on
+		(EMP_POS = pos_code)
+		where EMP_REMP = '1'
+	</select>
+
+	<!--사원 하나를 여러가지 옵션으로 검색 -->
+	<select id="getEmp" parameterClass="java.util.HashMap"
+		resultClass="getAllNowEmpVo">
+		select emp_code, dept_name, pos_name, emp_name, emp_gender, emp_hdate
+		from department inner join employee on (DEPT_CODE = emp_dept)
+		inner
+		join POSITION on (EMP_POS = pos_code)
+		<dynamic prepend="WHERE">
+			<isNull property="emp_name">
+				emp_code = #emp_code# or dept_name =#dept_name# or pos_name = #pos_name#
+			</isNull>
+			<isNotEmpty property="emp_name">
+				EMP_NAME like'%' || #emp_name# || '%'
+			</isNotEmpty>
+		</dynamic>
+	</select>
+
+
+	<!--로그인용 검색 (공용 시스템) -->
+	<select id="loginEmp" parameterClass="java.util.HashMap"
+		resultClass="empVo">
+		select * from EMPLOYEE where EMP_CODE = #emp_code# and
+		EMP_PASS = #emp_pass#
+	</select>
+
+	<!--회원 비밀번호 찾기 (미구현) -->
+	<select id="searchEmpPw" parameterClass="Map"
+		resultClass="String">
+		select * from EMPLOYEE where EMP_NAME = #emp_name# and
+		EMP_CODE = #emp_code#
+	</select>
+
+	<!-- 사원vo Alias END -->
+
+	<!-- 퇴사자vo Alias -->
+	<typeAlias alias="rempVo"
+		type="humanResources.vo.RetiredEmployeeVo" />
+	<typeAlias alias="getAllRetiredEmpVo"
+		type="humanResources.vo.join.GetAllRetiredEmpVo" />
+
+	<!--퇴직사원 하나 검색 -->
+	<select id="getOneRemp" parameterClass="String"
+		resultClass="rempVo">
+		select * from RETIREDEMPLOYEE where remp_code =
+		#remp_code#
+	</select>
+
+	<!--퇴사 사원 전체 검색 -->
+	<select id="getAllRetiredEmp" resultClass="getAllRetiredEmpVo">
+		select REMP_CODE,
+		REMP_NAME, remp_hp, DEPT_NAME, pos_name, emp_hdate, remp_date, REMP_NOTE, emp_addr, emp_regno1, emp_regno2
+		from
+		RETIREDEMPLOYEE inner join EMPLOYEE on (REMP_EMP = EMP_CODE)
+		inner
+		join
+		DEPARTMENT on (EMP_DEPT = DEPT_CODE)
+		inner join POSITION on
+		(pos_code =
+		emp_pos)
+	</select>
+
+	<!--퇴사사원 하나를 여러가지 옵션으로 검색 -->
+	<select id="getRemp" parameterClass="java.util.HashMap"
+		resultClass="getAllRetiredEmpVo">
+		select remp_code , remp_name, remp_hp, DEPT_NAME, remp_date, remp_note
+		from RETIREDEMPLOYEE inner join EMPLOYEE on	(REMP_EMP = EMP_CODE)
+		inner join DEPARTMENT on (EMP_DEPT = DEPT_CODE)
+		<dynamic prepend="WHERE">
+			<isNull property="remp_name">
+				REMP_CODE = #remp_code# or DEPT_NAME = #dept_name#
+			</isNull>
+			<isNotEmpty property="remp_name">
+				REMP_NAME  like '%' || #remp_name# || '%'
+			</isNotEmpty>
+		</dynamic>
+	</select>
+
+	<!-- 사원 하나 등록 -->
+	<update id="insertRemp" parameterClass="rempVo">
+		insert into
+		RETIREDEMPLOYEE (REMP_CODE, REMP_EMP, REMP_NAME, REMP_HP, REMP_DEPT,
+		REMP_DATE, REMP_NOTE)
+		values (#remp_code#, #remp_emp#, #remp_name#,
+		#remp_hp#, #remp_dept#, #remp_date#, #remp_note#)
+	</update>
+
+
+	<!-- 퇴사사원 삭제 (체크박스를 이용한 다중 삭제 허용) -->
+	<delete id="deleteRemp" parameterClass="java.util.List">
+		delete from RETIREDEMPLOYEE
+		<iterate open="(" close=")" conjunction=","
+			prepend="WHERE REMP_CODE IN ">
+			#[]#
+		</iterate>
+	</delete>
+
+	<!-- 퇴사사원 한명 내용 수정 (회원정보 업데이트) -->
+	<update id="updateRemp" parameterClass="rempVo">
+		update RETIREDEMPLOYEE
+		set REMP_EMP=#remp_emp#, REMP_NAME=#remp_name#, remp_hp=#remp_hp#,
+		remp_dept=#remp_dept#, remp_date=#remp_date#, remp_note=#remp_note#
+		where remp_code = #remp_code#
+	</update>
+
+	<!-- 퇴사자vo Alias END -->
+
+
+	<!-- 직급Vo -->
+	<typeAlias alias="posVo" type="humanResources.vo.PositionVo" />
+
+	<!--직급 리스트 -->
+	<select id="getAllPosition" resultClass="posVo">
+		select * from position
+	</select>
+	<!-- 직급Vo Alias END -->
+
+	<!-- 급여Vo -->
+	<!-- 급여Vo Alias END -->
+	<!-- 출결Vo -->
+	<!-- 출결Vo Alias END -->
+
+</sqlMap>

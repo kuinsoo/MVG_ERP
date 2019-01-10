@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TreeView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="700.0" maxWidth="1000.0" minHeight="700.0" minWidth="1000.0" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="material.controller.HouseController4">
+   <center>
+      <TabPane fx:id="tab" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
+        <tabs>
+          <Tab text="물품관리">
+            <content>
+              <AnchorPane maxHeight="527.0" maxWidth="800.0" minHeight="527.0" minWidth="800.0" prefHeight="527.0" prefWidth="800.0">
+                     <children>
+                        <Label layoutX="23.0" layoutY="14.0" text="물품 관리" textFill="#4b8d89">
+                           <font>
+                              <Font name="Malgun Gothic" size="18.0" />
+                           </font>
+                        </Label>
+                        <ComboBox fx:id="t1_cb" layoutX="23.0" layoutY="56.0" maxHeight="28.0" maxWidth="150.0" minHeight="28.0" minWidth="150.0" prefHeight="28.0" prefWidth="150.0" promptText="분류코드명" />
+                        <TextField fx:id="t1_tf" layoutX="186.0" layoutY="56.0" maxHeight="28.0" maxWidth="170.0" minHeight="28.0" minWidth="170.0" prefHeight="28.0" prefWidth="170.0" />
+                        <Button fx:id="t1_btn_search" defaultButton="true" layoutX="370.0" layoutY="56.0" maxHeight="28.0" maxWidth="54.0" minHeight="28.0" minWidth="54.0" mnemonicParsing="false" onAction="#actSearch" prefHeight="28.0" prefWidth="54.0" style="-fx-background-color: #313131;" text="검색" textFill="WHITE" />
+                        <TableView fx:id="t1_tv" layoutX="23.0" layoutY="94.0" maxWidth="753.0" minWidth="753.0" onMouseClicked="#Modified" prefWidth="753.0">
+                          <columns>
+                            <TableColumn fx:id="t1_chk" maxWidth="753.0" minWidth="35.0" prefWidth="35.0">
+                                 <graphic>
+                                    <CheckBox mnemonicParsing="false" />
+                                 </graphic></TableColumn>
+                            <TableColumn fx:id="t1_materialCodeCol" maxWidth="753.0" minWidth="70.0" prefWidth="70.0" text="분류코드" />
+                              <TableColumn fx:id="t1_materialCodeCol2" prefWidth="131.0" text="물품코드" />
+                              <TableColumn fx:id="t1_wearingNameCol" prefWidth="119.0" text="물품명" />
+                              <TableColumn fx:id="t1_accountCol" prefWidth="87.0" text="거래처" />
+                              <TableColumn fx:id="t1_quantityCol" prefWidth="72.0" text="수량" />
+                              <TableColumn fx:id="t1_priceCol" prefWidth="72.0" text="가격" />
+                              <TableColumn fx:id="t1_uprice" prefWidth="72.0" text="단가" />
+                              <TableColumn fx:id="t1_dateOfReceiptCol" minWidth="0.0" prefWidth="129.0" text="입고날짜" />
+                              <TableColumn fx:id="t1_Remarks" maxWidth="114.0" prefWidth="107.0" text="비고" />
+                          </columns>
+                        </TableView>
+                        <Button fx:id="t1_btn_submint" layoutX="661.0" layoutY="56.0" maxHeight="28.0" maxWidth="54.0" minHeight="28.0" minWidth="54.0" mnemonicParsing="false" onAction="#ok" prefHeight="28.0" prefWidth="54.0" style="-fx-background-color: #313131;" text="등록" textFill="WHITE" />
+                        <Button fx:id="t1_btn_delete" layoutX="722.0" layoutY="56.0" maxHeight="28.0" maxWidth="54.0" minHeight="28.0" minWidth="54.0" mnemonicParsing="false" onAction="#wearingDelete" prefHeight="28.0" prefWidth="54.0" style="-fx-background-color: #313131;" text="삭제" textFill="WHITE" />
+                     </children>
+                  </AnchorPane>
+            </content>
+          </Tab>
+        </tabs>
+      </TabPane>
+   </center>
+   <top>
+      <VBox maxHeight="105.0" maxWidth="1000.0" minHeight="105.0" minWidth="1000.0" prefHeight="105.0" prefWidth="1000.0" BorderPane.alignment="CENTER">
+         <children>
+            <Pane maxHeight="100.0" maxWidth="1000.0" minHeight="100.0" minWidth="1000.0" prefHeight="100.0" prefWidth="1000.0" style="-fx-background-color: #313131;">
+               <children>
+                  <Label layoutX="50.0" layoutY="24.0" text="자재관리부" textFill="WHITE">
+                     <font>
+                        <Font name="Malgun Gothic" size="45.0" />
+                     </font>
+                  </Label>
+                  <ImageView fx:id="logOut" fitHeight="30.0" fitWidth="30.0" layoutX="926.0" layoutY="7.0" onMouseClicked="#goLogin">
+                     <image>
+                        <Image url="@../../resources/icon/logout64x64.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fx:id="exit" fitHeight="25.0" fitWidth="25.0" layoutX="964.0" layoutY="10.0" onMouseClicked="#goExit">
+                     <image>
+                        <Image url="@../../resources/icon/close64x64.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fx:id="com" fitHeight="30.0" fitWidth="30.0" layoutX="883.0" layoutY="8.0" onMouseClicked="#com">
+                     <image>
+                        <Image url="@../../resources/icon/common64x64.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fx:id="chart" fitHeight="30.0" fitWidth="30.0" layoutX="842.0" layoutY="7.0" onMouseClicked="#chart">
+                     <image>
+                        <Image url="@../../resources/icon/chart64x64.png" />
+                     </image>
+                  </ImageView>
+               </children>
+            </Pane>
+            <Pane maxHeight="5.0" maxWidth="1000.0" minHeight="5.0" minWidth="1000.0" prefHeight="5.0" prefWidth="1000.0" style="-fx-background-color: #9727ed;" />
+         </children>
+      </VBox>
+   </top>
+   <left>
+      <VBox prefWidth="200.0" BorderPane.alignment="CENTER">
+         <children>
+            <Pane maxHeight="38.0" maxWidth="200.0" minHeight="38.0" minWidth="200.0" prefHeight="38.0" prefWidth="200.0" style="-fx-background-color: #dbdbdb;" />
+            <TreeView fx:id="treeView1" maxHeight="527.0" maxWidth="200.0" minHeight="527.0" minWidth="200.0" prefHeight="527.0" prefWidth="200.0" />
+         </children>
+      </VBox>
+   </left>
+   <bottom>
+      <AnchorPane maxHeight="30.0" maxWidth="1000.0" minHeight="30.0" minWidth="1000.0" prefHeight="30.0" prefWidth="1000.0" style="-fx-background-color: #313131;" BorderPane.alignment="CENTER">
+         <children>
+            <Label layoutX="666.0" layoutY="8.0" text="Copyright ⓒ 2018. team.조조할인해조 all rights reserved." textFill="WHITE">
+               <font>
+                  <Font name="Malgun Gothic" size="12.0" />
+               </font>
+            </Label>
+            <Label layoutX="14.0" layoutY="8.0" text="MVG.Co." textFill="#ed1831">
+               <font>
+                  <Font name="Malgun Gothic Bold" size="12.0" />
+               </font>
+            </Label>
+         </children>
+      </AnchorPane>
+   </bottom>
+</BorderPane>

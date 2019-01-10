@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap
+        PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+        "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<!-- 처리할 SQL문을 작성하는 문서 -->
+
+<!-- namespace속성 : 아래에서 작성한 SQL문을 호출할 때 같이 사용한다. -->
+<sqlMap namespace="sys">
+
+	<!-- basic.MemberVO 대신 memVo를 사용할 수 있다. -->
+	<typeAlias alias="accountVo" type="systemAdministration.vo.AccountVo" />
+	<typeAlias alias="buyerVo" type="systemAdministration.vo.BuyerVo" />
+	<typeAlias alias="codeRequestVo" type="systemAdministration.vo.CodeRequestVo" />
+	<typeAlias alias="departmentVo" type="systemAdministration.vo.DepartmentVo" />
+	<typeAlias alias="materialCateVo" type="systemAdministration.vo.MaterialCateVo" />
+	<typeAlias alias="positionVo" type="systemAdministration.vo.PositionVo" />
+	
+	<typeAlias alias="codeRequestDeptVo" type="systemAdministration.vo.join.CodeRequest_DepartmentVo" />
+
+<!-- 코드 신청서 -->
+	<!-- 코드 신청서 모두 가져오기. 부서코드와 부서명과 함께 -->
+	<select id="getAllCodeRequestDeptVoList" resultClass="codeRequestDeptVo">
+		Select * From coderequest Inner Join department On (crq_dept = dept_code)
+	</select>
+	
+	<!-- 코드 신청서 처리 여부 수정하기 -->
+	<update id="updateCodeRequest" parameterClass="codeRequestVo">
+		Update coderequest Set crq_prc = #crq_prc# Where crq_no = #crq_no#
+	</update>
+	
+	<!-- 코드 신청서 삭제하기 -->
+	<delete id="deleteCodeRequests" parameterClass="java.util.List">
+		Delete From coderequest
+	  	<iterate open="(" close=")" conjunction="," prepend="WHERE CRQ_NO IN ">
+	  	#[]#
+  		</iterate>
+	</delete>
+	
+	<!-- 코드 신청서 검색하기 -->
+	<select id="searchCodeRequests" parameterClass="java.util.HashMap" resultClass="codeRequestDeptVo">
+	 	Select * From coderequest
+	 	Inner Join department On (crq_dept = dept_code)
+		<isNotNull prepend="Where" property="dept_name">
+	 		dept_name like '%' || #dept_name# || '%' 
+	 	</isNotNull>
+	 	<isNotNull prepend="Where" property="crq_date">
+	 		crq_date like '%' || #crq_date# || '%'
+	 	</isNotNull>
+	 	<isNotNull prepend="Where" property="crq_div">
+	 		crq_div  like '%' || #crq_div#  || '%'
+	 	</isNotNull>
+	 	<isNotNull prepend="Where" property="crq_prc">
+	 		crq_prc  like '%' || #crq_prc#  || '%'
+	 	</isNotNull>
+	</select>
+	 
+	<!-- 코드 신청서 검색하기2 전체 컬럼에서 같은 검색 결과 넣기 -->
+	<select id="searchAllCodeRequests" parameterClass="String" resultClass="codeRequestDeptVo">
+	 	Select * From coderequest
+	 	Inner Join department On (crq_dept = dept_code)
+	 	Where  crq_no   	like '%' || #string# || '%'
+	 	Or 	   crq_dept 	like '%' || #string# || '%'  
+	 	Or 	   dept_code	like '%' || #string# || '%'  
+	 	Or 	   dept_name 	like '%' || #string# || '%'  
+	 	Or 	   crq_emp 		like '%' || #string# || '%'  
+		Or     crq_name 	like '%' || #string# || '%'  
+		Or     crq_date 	like '%' || #string# || '%' 
+		Or     crq_div 		like '%' || #string# || '%' 
+		Or     crq_prc 		like '%' || #string# || '%' 
+		Or     crq_note 	like '%' || #string# || '%' 
+	</select>
+
+
+<!-- 직급 코드 -->
+	<!-- 직급 리스트 모두 가져오기 -->
+	<select id="getAllPostionsList" resultClass="positionVo" >
+		Select * From position
+	</select>
+
+	<!-- 새 직급 등록하기 -->
+	<update id="insertPosition" parameterClass="positionVo">
+		 Insert Into position (pos_code, pos_name)
+		 Values (#pos_code#, #pos_name#)
+	</update>
+	
+	<!-- 직급 삭제하기 -->
+	<delete id="deletePositions" parameterClass="java.util.List">
+		Delete From position
+	  	<iterate open="(" close=")" conjunction="," prepend="WHERE POS_CODE IN ">
+	  	#[]#
+  		</iterate>
+	</delete>
+	
+	<!-- 직급 수정하기 -->
+	<update id="updatePosition" parameterClass="positionVo">
+	 	Update position Set pos_name = #pos_name# Where pos_code = #pos_code#
+	</update>
+	
+
+<!-- 부서 코드 -->
+	<!-- 부서 리스트 모두 가져오기 -->
+	<select id="getAllDepartmentsList" resultClass="departmentVo" >
+		Select * From department
+	</select>
+	
+	<!-- 새 부서 등록하기 -->
+	<update id="insertDepartment" parameterClass="departmentVo">
+		 Insert Into department (dept_code, dept_name)
+		 Values (#dept_code#, #dept_name#)
+	</update>
+
+	<!-- 부서 삭제하기 -->
+	<delete id="deleteDepartments" parameterClass="java.util.List">
+		Delete From department
+	  	<iterate open="(" close=")" conjunction="," prepend="WHERE DEPT_CODE IN ">
+	  	#[]#
+  		</iterate>
+	</delete>
+	
+	<!-- 부서 수정하기 -->
+	<update id="updateDepartment" parameterClass="departmentVo">
+	 	Update department Set dept_name = #dept_name# Where dept_code = #dept_code#
+	</update>
+
+
+<!-- 거래처코드 -->
+	<!-- 거래처 리스트 모두 가져오기 -->
+	<select id="getAllAccountsList" resultClass="accountVo" >
+		Select * From account
+	</select>
+
+	<!-- 새 거래처 등록하기 -->
+	<update id="insertAccount" parameterClass="accountVo">
+		 Insert Into account (acc_code, acc_name, acc_rep, acc_addr)
+		 Values (#acc_code#, #acc_name#, #acc_rep#, #acc_addr#)
+	</update>
+	
+	<!-- 거래처 삭제하기 -->
+	<delete id="deleteAccounts" parameterClass="java.util.List">
+		Delete From account
+	  	<iterate open="(" close=")" conjunction="," prepend="WHERE ACC_CODE IN ">
+	  	#[]#
+  		</iterate>
+	</delete>
+	
+	<!-- 거래처 수정하기 -->
+	<update id="updateAccount" parameterClass="accountVo">
+	 	Update account 
+	 	<!-- prepend -> 작성된 문장 다음에 ~가 와라 -->
+	 	<dynamic prepend="set">
+	 		<!-- property -> 어떤것이 null인지 아닌지 검사 -->
+	 		<isNotNull prepend="," property="acc_name">
+	 			acc_name = #acc_name#
+	 		</isNotNull>
+	 		<isNotNull prepend="," property="acc_rep">
+	 			acc_rep = #acc_rep#
+	 		</isNotNull>
+	 		<isNotNull prepend="," property="acc_addr">
+	 			acc_addr = #acc_addr#
+	 		</isNotNull>
+	 	</dynamic>  
+	 	Where acc_code=#acc_code#
+	 </update>
+	 
+	 <!-- 거래처 검색하기 -->
+	 <select id="searchAccounts" parameterClass="java.util.HashMap" resultClass="accountVo">
+	 	Select * From account
+		<isNotNull prepend="Where" property="acc_code">
+	 		acc_code like '%' || #acc_code# || '%' 
+	 	</isNotNull>
+	 	<isNotNull prepend="Where" property="acc_name">
+	 		acc_name like '%' || #acc_name# || '%'
+	 	</isNotNull>
+	 	<isNotNull prepend="Where" property="acc_rep">
+	 		acc_rep like  '%' || #acc_rep#  || '%'
+	 	</isNotNull>
+	 </select>
+	 
+	 <!-- 거래처 검색하기2 전체 컬럼에서 같은 검색 결과 넣기 -->
+	 <select id="searchAllAccounts" parameterClass="String" resultClass="accountVo">
+	 	Select * From account
+	 	Where  acc_code like '%' || #string# || '%'
+	 	Or 	   acc_name like '%' || #string# || '%'  
+		Or     acc_rep like  '%' || #string# || '%'  
+		Or     acc_addr like '%' || #string# || '%'  
+	 </select>
+	 
+
+<!-- 품목(자재) 코드 -->
+	<!-- 품목(자재) 리스트 모두 가져오기 -->
+	<select id="getAllMaterialCatesList" resultClass="materialCateVo" >
+		Select * From materialCate
+	</select>
+
+	<!-- 새 품목(자재) 등록하기 -->
+	<update id="insertMaterialCate" parameterClass="materialCateVo">
+		 Insert Into materialcate (matc_code, matc_name)
+		 Values (#matc_code#, #matc_name#)
+	</update>
+
+	<!-- 품목(자재) 삭제하기 -->
+	<delete id="deleteMaterialCates" parameterClass="java.util.List">
+		Delete From materialcate
+	  	<iterate open="(" close=")" conjunction="," prepend="WHERE MATC_CODE IN ">
+	  	#[]#
+  		</iterate>
+	</delete>
+	
+	<!-- 품목(자재) 수정하기 -->
+	<update id="updateMaterialCate" parameterClass="materialCateVo">
+	 	Update materialcate Set matc_name = #matc_name# Where matc_code = #matc_code#
+	</update>
+	
+	<!-- 품목(자재) 검색하기 -->
+	 <select id="searchMaterialCates" parameterClass="java.util.HashMap" resultClass="materialCateVo">
+	 	Select * From materialcate
+		<isNotNull prepend="Where" property="matc_code">
+	 		matc_code like '%' || #matc_code# || '%' 
+	 	</isNotNull>
+	 	<isNotNull prepend="Where" property="matc_name">
+	 		matc_name like '%' || #matc_name# || '%'
+	 	</isNotNull>
+	 </select>
+	 
+	 <!-- 품목(자재) 검색하기2 전체 컬럼에서 같은 검색 결과 넣기 -->
+	 <select id="searchAllMaterialCates" parameterClass="String" resultClass="materialCateVo">
+	 	Select * From materialcate
+	 	Where  matc_code like '%' || #string# || '%'
+	 	Or 	   matc_name like '%' || #string# || '%'  
+	 </select>
+
+
+<!-- 구매처 코드 -->
+	<!-- 구매처 리스트 모두 가져오기 -->
+	<select id="getAllBuyersList" resultClass="buyerVo" >
+		Select * From buyer
+	</select>
+	
+	<!-- 새 구매처 등록하기 -->
+	<update id="insertBuyer" parameterClass="buyerVo">
+		 Insert Into buyer (buyer_code, buyer_name, buyer_rep, buyer_addr)
+		 Values (#buyer_code#, #buyer_name#, #buyer_rep#, #buyer_addr#)
+	</update>
+
+	<!-- 구매처 삭제하기 -->
+	<delete id="deleteBuyers" parameterClass="java.util.List">
+		Delete From buyer
+	  	<iterate open="(" close=")" conjunction="," prepend="WHERE BUYER_CODE IN ">
+	  	#[]#
+  		</iterate>
+	</delete>
+	
+	<!-- 구매처 수정하기 -->
+	<update id="updateBuyer" parameterClass="buyerVo">
+	 	Update buyer 
+	 	<!-- prepend -> 작성된 문장 다음에 ~가 와라 -->
+	 	<dynamic prepend="set">
+	 		<!-- property -> 어떤것이 null인지 아닌지 검사 -->
+	 		<isNotNull prepend="," property="buyer_name">
+	 			buyer_name = #buyer_name#
+	 		</isNotNull>
+	 		<isNotNull prepend="," property="buyer_rep">
+	 			buyer_rep = #buyer_rep#
+	 		</isNotNull>
+	 		<isNotNull prepend="," property="buyer_addr">
+	 			buyer_addr = #buyer_addr#
+	 		</isNotNull>
+	 	</dynamic>  
+	 	Where buyer_code=#buyer_code#
+	 </update>
+	 
+	 <!-- 구매처 검색하기 -->
+	 <select id="searchBuyers" parameterClass="java.util.HashMap" resultClass="buyerVo">
+	 	Select * From buyer
+		<isNotNull prepend="Where" property="buyer_code">
+	 		buyer_code like '%' || #buyer_code# || '%' 
+	 	</isNotNull>
+	 	<isNotNull prepend="Where" property="buyer_name">
+	 		buyer_name like '%' || #buyer_name# || '%'
+	 	</isNotNull>
+	 	<isNotNull prepend="Where" property="buyer_rep">
+	 		buyer_rep like '%' || #buyer_rep# || '%'
+	 	</isNotNull>
+	 </select>
+	 
+	 <!-- 구매처 검색하기2 전체 컬럼에서 같은 검색 결과 넣기 -->
+	 <select id="searchAllBuyers" parameterClass="String" resultClass="buyerVo">
+	 	Select * From buyer
+	 	Where  buyer_code like '%' || #string# || '%'
+	 	Or 	   buyer_name like '%' || #string# || '%'  
+	 	Or 	   buyer_rep  like '%' || #string# || '%'  
+	 	Or 	   buyer_addr like '%' || #string# || '%'  
+	 </select>
+
+
+</sqlMap>

@@ -1,0 +1,575 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap
+        PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+        "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<!-- 처리할 SQL문을 작성하는 문서 -->
+
+<!-- namespace속성 : 아래에서 작성한 SQL문을 호출할 때 같이 사용한다. -->
+<sqlMap namespace="prod">
+
+  <!--  basic.MemberVO 대신 memVo를 사용할 수 있다.-->
+  <typeAlias alias="prodVo" type="production.vo.ProductionVo"/> 
+  <typeAlias alias="prodStockVo" type="production.vo.ProductionStockVO"/>
+  <typeAlias alias="prodJournalVo" type="production.vo.ProductionJournalVO"/>
+  <typeAlias alias="prodQualityVo" type="production.vo.QualityInspectionVO"/>
+  <typeAlias alias="prodDefectiveVo" type="production.vo.DefectiveProductVo"/>
+  <typeAlias alias="DefectiveVo" type="production.vo.DefectiveVO"/>
+  <typeAlias alias="prodMachineVo" type="production.vo.ProductionMachineVO"/>
+  <typeAlias alias="assistantVo" type="production.vo.AssistantVO"/>
+  <typeAlias alias="buyerSelectVo" type="production.vo.BuyerVO"/>
+  <typeAlias alias="machVO" type="production.vo.MachineVO"/>
+  <typeAlias alias="qualVO" type="production.vo.QualityVo"/>
+  <typeAlias alias="empVO" type="humanResources.vo.EmployeeVo"/>
+  <typeAlias alias="saleVO" type="production.vo.SaleVO"/>
+
+
+  <!-- 생산부 직원 검색 -->
+  <select id="selectProdEmp" resultClass="empVO">
+  	select * from employee
+  	where emp_dept = 'mdp001'
+  </select>
+  
+  
+  <!--사원 전체 검색
+  <select id="getAllProd" resultClass="prodVo">
+	 	select * from production
+	 </select>
+	-->
+
+    <!--사원 하나를 여러가지 옵션으로 검색
+  <select id="getProd" parameterClass="String" resultClass="prodVo">
+	  select * from production where prod_code = #prod_code# or prod_name like '%' || #prod_name# || '%' 
+  </select>
+  -->
+  
+  <!-- 생산입고 전체 리스트 출력 -->
+  <select id="getProductionStock" resultClass="prodStockVo">
+  	select ast_no, matc_name, mat_code, ast_name, ast_date, ast_qty, mat_uprice
+	 from MaterialCate inner join Material on (matc_code = mat_metc)
+                	  inner join  Assistant on (mat_code = ast_mat)
+  </select>
+  
+  <!-- 생산입고 분류 코드별 검색  -->
+  <select id="ProductionStockCode" parameterClass="String" resultClass="prodStockVo">
+  	select ast_no, matc_name, mat_code, ast_name, ast_date, ast_qty, mat_uprice
+	 from MaterialCate inner join Material on (matc_code = mat_metc)
+                	  inner join  Assistant on (mat_code = ast_mat)
+      where matc_name like '%' || #matc_name# || '%'
+  </select>
+  
+  <!-- 생산입고 날짜 별 검색 -->
+  <select id="ProdcutionStockDate" parameterClass="String" resultClass="prodStockVo">
+  	select ast_no, matc_name, mat_code, ast_name, ast_date, ast_qty, mat_uprice
+	 from MaterialCate inner join Material on (matc_code = mat_metc)
+                	  inner join  Assistant on (mat_code = ast_mat)
+      where ast_date like '%' || #ast_date# || '%'
+  </select>
+  
+  <!-- 생산 입고 품목별 검색 -->
+  <select id="ProductionStockName" parameterClass="String" resultClass="prodStockVo">
+  	select ast_no, matc_name, mat_code, ast_name, ast_date, ast_qty, mat_uprice
+	 from MaterialCate inner join Material on (matc_code = mat_metc)
+                	  inner join  Assistant on (mat_code = ast_mat)
+      where ast_name like '%' || #ast_name# || '%'
+  </select>
+  
+  
+  <!-- 
+  <insert id="InsertProductionStock" parameterClass="prodStockVo">
+  	Insert into 
+  	values (#mat_metc#, #mat_code#, #ast_name#, #ast_date#, #ast_#, ##)
+  </insert>
+   -->
+  
+  <!--  생산 입고 관리 삭제  -->
+  <delete id="DeleteProductionStock" parameterClass="String">
+  	delete from Assistant
+  	where ast_no = #ast_no#
+  </delete>
+  
+  <!-- 생산 전체 리스트 검색 -->
+  <select id="getAllProdcution" resultClass="prodVo">
+  	select * from production
+  </select>
+  
+  
+  
+  
+  <!-- 생산일지 전체 리스트 출력 -->
+  <select id="getProductionJournal" resultClass = "prodJournalVo">
+  	select prod_code, prod_name, prod_date, prod_qty, prod_sale, prod_writer
+	from production
+  </select>
+  
+  <!-- 생산일지 등록 -->
+  <insert id="insertProdJournal" parameterClass="prodJournalVo">
+  	insert into production
+  	values(#prod_code#,#prod_name#,#prod_date#,#prod_qty#,#prod_sale#)
+  </insert>
+  
+  <!-- 생산일지 삭제 -->
+  <delete id="deletProdJournal" parameterClass="java.util.List">
+		delete from Production
+		<iterate open="(" close=")" conjunction ="," prepend ="where prod_code in">
+		#[]#
+		
+		</iterate>
+	</delete>
+  
+  
+  <!-- 상품명별 생산일지 검색 -->
+    <select id="getProductionJournalCode" parameterClass="String"  resultClass = "prodJournalVo">
+  		select prod_code, prod_name, prod_date, prod_qty, prod_sale
+		from production
+		where prod_name like '%' || #prod_name# || '%'
+ 	 </select>
+ 	 
+ <!-- 날짜별 생산일지 검색 -->
+   <select id="getProductionJournalDate" parameterClass="String"  resultClass = "prodJournalVo">
+  		select prod_code, prod_name, prod_date, prod_qty, prod_sale
+		from production
+		where prod_date like '%' || #prod_date# || '%'
+ 	 </select>
+  
+  <!-- 품질관리 전체 리스트 검색 -->
+  <select id="getQualityInspection" resultClass="prodQualityVo">
+  
+  	select prod_code, prod_name, prod_date, qual_date, qual_level, qual_write
+  	from Production inner join Quality on(prod_code = qual_code)
+  
+  </select>
+  
+  <!-- 품질관리 상품명별 검색 -->
+  <select id="selectQualityInspectionName" parameterClass="String" resultClass="prodQualityVo">
+  	select prod_code, prod_name, prod_date, qual_date, qual_level
+  	from Production inner join Quality on(prod_code = qual_code)
+  	where prod_name like '%' || #prod_name# || '%'
+  </select>
+  
+  <!-- 품질관리 검사날짜별 검색 -->
+  <select id="selectQualityInspectionDate" parameterClass="String" resultClass="prodQualityVo">
+  	select prod_code, prod_name, prod_date, qual_date, qual_level
+  	from Production inner join Quality on(prod_code = qual_code)
+  	where qual_date like '%' || #qual_date# || '%'
+  </select>
+   
+  <!-- 품질관리 상품명별 검색 -->
+  <select id="selectQualityInspectionLevel" parameterClass="Integer" resultClass="prodQualityVo">
+  	select prod_code, prod_name, prod_date, qual_date, qual_level
+  	from Production inner join Quality on(prod_code = qual_code)
+  	where qual_level like '%' ||  #qual_level# || '%'
+  </select>
+  
+  
+  
+  
+  
+  
+  <!-- 불량관리 전체 리스트 검색  -->
+  <select id="getDefectiveProduction" resultClass="DefectiveVo">
+  	
+  	select dprod_code, prod_code, prod_name, prod_date, dprod_reason, qual_level
+  	from DefectiveProduct inner join Quality on (dprod_qual = qual_code)
+  						  inner join Production on (qual_code = prod_code)
+  	
+  </select>
+  
+  <!-- 불량관리 상품명 별 검색 -->
+    <select id="selectDefectiveName" parameterClass="String" resultClass="DefectiveVo">
+  	
+  	select dprod_code, prod_code, prod_name, prod_date, dprod_reason, qual_level
+  	from DefectiveProduct inner join Quality on (dprod_qual = qual_code)
+  						  inner join Production on (qual_code = prod_code)
+  	where prod_name like '%' || #prod_name# || '%'
+  	
+  </select>
+  
+  <!-- 불량관리 생산날짜별 검색 -->
+    <select id="selectDefectiveDate" parameterClass="String" resultClass="DefectiveVo">
+  	
+  	select dprod_code, prod_code, prod_name, prod_date, dprod_reason, qual_level
+  	from DefectiveProduct inner join Quality on (dprod_qual = qual_code)
+  						  inner join Production on (qual_code = prod_code)
+  	where prod_date like '%' || #prod_date# || '%'
+  	
+  </select>
+  
+  <!-- 불량관리 등급별 검색 -->
+    <select id="selectDefectiveLevel" parameterClass="Integer" resultClass="DefectiveVo">
+  	
+  	select dprod_code, prod_code, prod_name, prod_date, dprod_reason, qual_level
+  	from DefectiveProduct inner join Quality on (dprod_qual = qual_code)
+  						  inner join Production on (qual_code = prod_code)
+  	where qual_level like '%' || #qual_level# || '%'
+  	
+  </select>
+  
+  
+  <!-- 기기관리 전체 리스트 검색 -->
+  <select id="getMachineManageList" resultClass="prodMachineVo">
+  
+  	select mach_code, buyer_name, mach_name, mach_date, mach_qty, mach_writer
+  	from machine inner join buyer on (mach_buyer = buyer_code)
+  	
+  </select>
+  
+  <!-- 기기관리 기기명별 검색 -->
+  <select id="selectMachineName" parameterClass="String" resultClass="prodMachineVo">
+  
+  	select mach_code, buyer_name, mach_name, mach_date, mach_qty
+  	from machine inner join buyer on (mach_buyer = buyer_code)
+  	where mach_name like '%' || #mach_name# || '%'
+  	
+  </select>
+  
+  <!-- 기기관리 입고날짜별 검색 -->
+  <select id="selectMachineDate" parameterClass="String" resultClass="prodMachineVo">
+  
+  	select mach_code, buyer_name, mach_name, mach_date, mach_qty
+  	from machine inner join buyer on (mach_buyer = buyer_code)
+  	where mach_date like '%' || #mach_date# || '%'
+  	
+  </select>
+  
+  <!-- 기기관리 거래처별 검색 -->
+  <select id="selectMachineBuyer" parameterClass="String" resultClass="prodMachineVo">
+  
+  	select mach_code, buyer_name, mach_name, mach_date, mach_qty
+  	from machine inner join buyer on (mach_buyer = buyer_code)
+  	where buyer_name like '%' || #buyer_name# || '%'
+  	
+  </select>
+  
+  <!--  생산 입고 관리 등록 	-->
+	<insert id="insertProduction" parameterClass="assistantVo">
+		insert into assistant
+		values (#ast_no#, #ast_mat#, #ast_date# , #ast_name#, #ast_qty#, '')
+		
+	</insert>  	
+	
+	<!--  거래처 검색  -->
+	<select id="getBuyerList" resultClass="buyerSelectVo">
+	
+		select * from buyer
+	
+	</select>
+	
+	<!--  기기등록  -->
+	<insert id="insertMachine">
+		insert into machine
+		values(#mach_code#,#mach_buyer#,#mach_name#,#mach_date#,#mach_qty#,#mach_note#,#mach_writer#)
+	</insert>
+
+	<!-- 기기 삭제 -->
+	<delete id="deleteMachinProd" parameterClass="java.util.List">
+	
+		delete from machine
+		<iterate open="(" close=")" conjunction ="," prepend ="where mach_code in">
+		#[]#
+		
+		</iterate>
+		
+	</delete>
+	
+	<!-- 기기 수정 -->
+	<update id="updateMatchProd" parameterClass="machVO">
+		update machine
+		<dynamic prepend="set">
+			<isNotNull prepend="," property="mach_buyer">
+				mach_buyer= #mach_buyer#
+			</isNotNull>
+			
+			<isNotNull prepend="," property="mach_name">
+				mach_name = #mach_name#
+			</isNotNull>
+			
+			<isNotNull prepend="," property="mach_date">
+				mach_date =#mach_date#
+			</isNotNull>
+			
+			<isNotNull prepend="," property="mach_qty">
+				mach_qty = #mach_qty#
+			</isNotNull>
+			
+			<isNotNull prepend="," property="mach_writer">
+				mach_writer = #mach_writer#
+			</isNotNull>
+			
+		</dynamic>
+		where mach_code = #mach_code#
+	</update>
+
+	<!-- 품질 수정 -->	
+	<update id="updateQuality" parameterClass="qualVO">
+		update quality
+		<dynamic prepend="set">
+			<isNotNull  prepend="," property="qual_date">
+				qual_date = #qual_date#
+			</isNotNull>
+
+			<isNotNull  prepend="," property="qual_level">
+				qual_level = #qual_level#
+			</isNotNull>
+			
+			<isNotNull  prepend="," property="qual_write">
+				qual_write = #qual_write#
+			</isNotNull>
+			where qual_code = #qual_code#
+		</dynamic>
+	</update>
+	
+	<!-- 품질 목록 삭제 -->
+	<delete id="deleteQuality" parameterClass="java.util.List">
+		delete from quality
+		<iterate open="(" close=")" conjunction ="," prepend ="where qual_code in">
+		#[]#
+		
+		</iterate>
+	
+	</delete>
+	
+	<!-- 품질 등록 -->
+	<insert id="insertQuality" parameterClass="qualVO">
+		insert into quality
+		values (#qual_code#, #qual_date#, #qual_level#, #qual_note#, #qual_write#, #qual_qty#)
+	</insert>
+	
+	
+	
+	
+	<!-- 생산품 목록 중 등급이 3-5에 해당하는 목록 조회-->
+	<select id="selectProduction" resultClass="prodVo">
+		select prod_code, prod_name 
+		from production inner join quality on(prod_code = qual_code)
+		where qual_level between 3 and 5
+	</select>
+	
+	
+	<!-- 불량 등록 -->
+	<insert id="insertDefective" parameterClass="prodDefectiveVo">
+		insert into defectiveProduct
+		values(#dprod_code#,#dprod_qual#,#dprod_reason#)
+	</insert>
+	
+	<!-- 불량 수정 -->
+	<update id="updateDefective" parameterClass="prodDefectiveVo">
+		update defectiveProduct
+		<dynamic prepend="set">
+			<isNotNull prepend="," property="dprod_code">
+				dprod_code = #dprod_code#
+			</isNotNull>
+			<isNotNull prepend="," property="dprod_qual">
+				dprod_qual = #dprod_qual#
+			</isNotNull>
+			<isNotNull prepend="," property="dprod_reason">
+				dprod_reason = #dprod_reason#
+			</isNotNull>
+			where dprod_code = #dprod_code#
+		</dynamic>
+	</update>
+	
+	<!-- 불량 삭제 -->
+	<delete id="deleteDefective" parameterClass="java.util.List">
+		delete from defectiveProduct
+		<iterate open="(" close=")" conjunction ="," prepend ="where dprod_code in">
+		#[]#
+		
+		</iterate>
+	</delete>
+	
+	
+	<update id="updateprodJournal" parameterClass="prodVo">
+		update production
+		<dynamic prepend="set">
+			<isNotNull prepend="," property="prod_code">
+				prod_code = #prod_code#
+			</isNotNull>
+			<isNotNull prepend="," property="prod_dept">
+				prod_dept = #prod_dept#
+			</isNotNull>
+			<isNotNull prepend="," property="prod_ast">
+				prod_ast = #prod_ast#
+			</isNotNull>
+			<isNotNull prepend="," property="prod_mach">
+				prod_mach = #prod_mach#
+			</isNotNull>
+			<isNotNull prepend="," property="prod_date">
+				prod_date = #prod_date#
+			</isNotNull>
+			<isNotNull prepend="," property="prod_name">
+				prod_name = #prod_name#
+			</isNotNull>
+			<isNotNull prepend="," property="prod_sale">
+				prod_sale = #prod_sale#
+			</isNotNull>
+			<isNotNull prepend="," property="prod_qty">
+				prod_qty = #prod_qty#
+			</isNotNull>
+			<isNotNull prepend="," property="prod_note">
+				prod_note = #prod_note#
+			</isNotNull>
+			<isNotNull prepend="," property="prod_writer">
+				prod_writer = #prod_writer#
+			</isNotNull>
+			where prod_code = #prod_code#
+		</dynamic>
+	</update>
+	
+	<!-- 수불관리 전체 검색 -->
+	<select id="selectAssistant" resultClass="assistantVo">
+		select ast_no, ast_mat, ast_date, ast_name, ast_qty, ast_note 
+		from assistant inner join material on(ast_mat = mat_code)
+		where mat_metc like  '%' || 'mat' || '%'
+
+	</select>
+	
+	<!-- 기기관리 전체 검색 -->
+	<select id="selectMachine" resultClass="machVO">
+		select * from machine	
+	</select>
+
+
+	<insert id="insertJournal" parameterClass="prodVo"> 
+		insert into production
+		values(#prod_code#,#prod_dept#,#prod_ast#,#prod_mach#,#prod_date#,#prod_name#,#prod_sale#,#prod_qty#,#prod_note#,#prod_writer#)
+		
+	</insert>
+	
+	
+	<!-- 생산품 조건 검색 -->
+	<select id="prodSelect" parameterClass="String" resultClass="prodVo">
+		select * from production
+		where prod_code = #prod_code#
+	</select>
+	
+	<!-- 매출 등록 -->
+	<insert id="prodSales" parameterClass="saleVO">
+		insert into sales
+		values(#prod_code#,#prod_name#,#prod_sale#,#prod_qty#,#sale_price# ,#sale_date#)
+	</insert>
+	
+	<!-- 매출 전체 검색 -->
+	<select id="selectSale" resultClass="saleVO">
+		select * from sales
+	</select>
+	
+	<update id="updateSale" parameterClass="saleVO">
+		update sales
+		<dynamic prepend="set">
+			<isNotNull prepend="," property="prod_code">
+				prod_code = #prod_code#
+			</isNotNull>
+			<isNotNull prepend="," property="prod_name">
+				prod_name = #prod_name#
+			</isNotNull>
+			<isNotNull prepend="," property="prod_sale">
+				prod_sale = #prod_sale#
+			</isNotNull>
+			<isNotNull prepend="," property="prod_qty">
+				prod_qty = #prod_qty#
+			</isNotNull>
+			<isNotNull prepend="," property="sale_price">
+				sale_price = #sale_price#
+			</isNotNull>
+			<isNotNull prepend="," property="sale_date">
+				sale_date = #sale_date#
+			</isNotNull>
+			where prod_code = #prod_code#
+		</dynamic>
+	</update>
+	
+	
+	<!-- 매출 관리 삭제 -->
+	<delete id="deleteSale" parameterClass="java.util.List">
+		delete from sales
+			<iterate open="(" close=")" conjunction ="," prepend ="where prod_code in">
+		#[]#
+		</iterate>
+	</delete>
+	
+	<!-- 상품명에 따른 매출 검색 -->
+	<select id="selectSalesName" parameterClass="String" resultClass="saleVO">
+		select * from sales
+		where prod_name like '%' || #prod_name# || '%' 
+	</select>
+	
+	<!-- 상품 날짜에 따른 매출 검색 -->
+	<select id="selectSaleDate" parameterClass="String" resultClass="saleVO">
+		select * from sales
+		where sale_date = #sale_date# 
+	</select>
+	
+	<!--1-2등급 상품 검색 -->
+	<select id="selectProdlevel" resultClass="prodVo">
+		select prod_name, prod_code, prod_qty, prod_sale
+		from production inner join quality on (prod_code = qual_code)
+		where qual_level between 1 and 2
+	</select>
+
+	<select id="selectProdQty" parameterClass="String" resultClass="prodVo">
+		select * from production
+		where prod_code = #prod_code# 
+	</select>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+</sqlMap>

@@ -1,0 +1,684 @@
+package material.controller;
+
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.ResourceBundle;
+
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.TabPane;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
+import javafx.scene.control.TreeCell;
+import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeView;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.text.Text;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
+import javafx.util.Duration;
+import material.service.IMaterialService;
+import material.service.MaterialService;
+import material.vo.AssistantVo;
+import material.vo.MaterialMainVo;
+import staticMethod.alert.AlertWindow;
+import staticMethod.windowOptions.WindowOpstions;
+
+public class HouseController1 {
+
+	private TreeItem<String> item1;
+
+	private TreeItem<String> item2;
+
+	IMaterialService houseService ;
+
+	@FXML
+	private ResourceBundle resources;
+
+	@FXML
+	private URL location;
+
+	@FXML
+	private Button t1_btn_delete;
+
+	@FXML
+	private ImageView img_logOut;
+
+	@FXML
+	private Button t2_btn_submint;
+
+	@FXML
+	private CheckBox t2_check;
+
+	@FXML
+	private TableView<MaterialMainVo> t1_tv;
+
+	@FXML
+	private TableColumn<MaterialMainVo,String> t1_materialCodeCol;
+
+	@FXML
+	private TableColumn<MaterialMainVo,String> t1_materialCodeCol2;
+
+	@FXML
+	private TableColumn<MaterialMainVo,String> t1_wearingNameCol;
+
+	@FXML
+	private TableColumn<MaterialMainVo, String> t1_accountCol;
+
+	@FXML
+	private TableColumn<MaterialMainVo, Integer> t1_quantityCol;
+
+	@FXML
+	private TableColumn<MaterialMainVo, Integer> t1_priceCol;
+
+	@FXML
+	private TableColumn<MaterialMainVo, Integer> t1_uprice;
+
+	@FXML
+	private TableColumn<MaterialMainVo, String> t1_dateOfReceiptCol;
+
+	@FXML
+	private TableColumn<MaterialMainVo, String> t1_Remarks;
+
+	@FXML
+	private TableColumn<MaterialMainVo, Boolean> t1_chk;
+
+	@FXML
+	private TableView<AssistantVo> t2_tv;
+
+	@FXML
+	private TableColumn<AssistantVo, Integer> t2_assNumberCol;
+
+	@FXML
+	private TableColumn<AssistantVo, String> t2_materialCodeCol;
+
+	@FXML
+	private TableColumn<AssistantVo, String> t2_materialCodeCol2;
+
+	@FXML
+	private TableColumn<AssistantVo, String> t2_releaseNameCol;
+
+	@FXML
+	private TableColumn<AssistantVo, String> t2_accountCol;
+
+	@FXML
+	private TableColumn<AssistantVo, Integer> t2_quantityCol;
+
+	@FXML
+	private TableColumn<AssistantVo, String> t2_assDateCol;
+
+	@FXML
+	private TableColumn<AssistantVo, String> t2_Remarks;
+
+	@FXML
+	private TableColumn<AssistantVo, Boolean> t2_chk;
+
+	@FXML
+	private TreeView<String> treeView1;
+
+	@FXML
+	private ImageView img_exit;
+
+	@FXML
+	private CheckBox t1_check;
+
+	@FXML
+	private Button t1_btn_search;
+
+	@FXML
+	private Button t1_btn_submint;
+
+	@FXML
+	private TextField t2_tf;
+
+	@FXML
+	private Button t2_btn_delete;
+
+	@FXML
+	private ImageView img_common;
+
+	@FXML
+	private ImageView img_chart;
+
+	@FXML
+	private Button t2_btn_search;
+
+	@FXML
+	private TextField t1_tf_search;
+
+	@FXML
+	private TabPane tab;
+
+	@FXML
+	private ComboBox<String> t1_cb;
+
+	@FXML
+	private ComboBox<String> t2_cb;
+
+
+
+	/**
+	 * 
+	 *@Method Name : wearingSearch
+	 *@date : 2018. 9. 18.
+	 *@author : JeeSeon
+	 *@Method 설명 : 자재 입고 관리 콤보박스 및 검색처리
+	 *@param event
+	 */
+	@FXML
+	void wearingSearch(ActionEvent event) {
+		houseService = MaterialService.getInstance();
+		Map<String, String> astMap = new HashMap<>();
+		if(t1_cb.getValue().toString().equals("분류코드") ) {  // 콤보박스 값을 가져와서 비교하는 부분
+			astMap.put("matc_name", t1_tf_search.getText());
+		}else if(t1_cb.getValue().toString().equals("자재코드")){
+			astMap.put("mat_code", t1_tf_search.getText());
+		}else if(t1_cb.getValue().toString().equals("입고자재명")){
+			astMap.put("mat_name", t1_tf_search.getText());
+		}else if(t1_cb.getValue().toString().equals("거래처")){
+			astMap.put("buyer_name", t1_tf_search.getText());
+
+		}
+		
+		List<MaterialMainVo> astList = houseService.getMat(astMap);
+		ObservableList<MaterialMainVo> houseVo  = FXCollections.observableArrayList(astList);		
+		t1_tv.setItems(houseVo);
+
+
+	}
+
+	/**
+	 * 
+	 *@Method Name : wearingOk
+	 *@date : 2018. 9. 18.
+	 *@author : JeeSeon
+	 *@Method 설명 : 입고 등록클릭시 등록창 오픈
+	 *@param event
+	 */
+	@FXML
+	void wearingOk(ActionEvent event) {
+		try {
+			Stage okStage =  (Stage)tab.getScene().getWindow();
+			Stage MatEnrollment = new Stage();						 	
+			MatEnrollment.initModality(Modality.APPLICATION_MODAL); 	
+			MatEnrollment.initOwner(okStage);							
+			Parent proot = FXMLLoader.load(getClass().getResource("../fxml/MatEnrollmentRes.fxml"));  
+			Scene scene = new Scene(proot);							
+			MatEnrollment.setScene(scene);	
+			MatEnrollment.initStyle(StageStyle.UNDECORATED);
+			MatEnrollment.showAndWait();
+
+			ObservableList<MaterialMainVo> houseVo  = FXCollections.observableArrayList(houseService.getMatWearingMain());		
+			t1_tv.setItems(houseVo);
+
+
+			
+			
+		} catch (IOException e) {
+			System.out.println(e);
+		} 
+	}
+
+
+	
+	/**
+	 * 
+	 *@Method Name : Modified
+	 *@date : 2018. 9. 20.
+	 *@author : JeeSeon
+	 *@Method 설명 : 자재부 리스트 내역 클릭시 수정창 오픈
+	 *@param event
+	 */
+	@FXML
+	void Modified(MouseEvent event) {
+		if(event.getClickCount() > 1) {	 // 두번 누르면 실행
+			try {
+				Stage okStage =  (Stage)tab.getScene().getWindow();
+				Stage MatEnrollment = new Stage();						 	
+				MatEnrollment.initModality(Modality.APPLICATION_MODAL); 	
+				MatEnrollment.initOwner(okStage);	
+				System.out.println("들어간다");
+				FXMLLoader loader = new FXMLLoader(getClass().getResource("../fxml/MatModifiedRes.fxml"));
+				Parent proot = loader.load();
+
+				MatModifiedResController update = loader.getController();
+				MaterialMainVo mat = t1_tv.getSelectionModel().getSelectedItem();
+
+				update.insertToForm(mat);
+				update.insertToForm2(mat);
+
+				System.out.println("갖다온다");
+				Scene scene = new Scene(proot);							
+				MatEnrollment.setScene(scene);	
+				MatEnrollment.initStyle(StageStyle.UNDECORATED);
+				MatEnrollment.showAndWait();
+
+				ObservableList<MaterialMainVo> houseVo  = FXCollections.observableArrayList(houseService.getMatWearingMain());		
+				t1_tv.setItems(houseVo);
+
+			} catch (IOException e) {
+				System.out.println(e);
+			} 
+		}
+	}
+	
+	/**
+	 * 
+	 *@Method Name : wearingDelete
+	 *@date : 2018. 9. 20.
+	 *@author : JeeSeon
+	 *@Method 설명 : 자재 입고 삭제
+	 *@param event
+	 */
+	@FXML
+	void wearingDelete(ActionEvent event) {
+		List<MaterialMainVo> matList = houseService.getMatWearingMain();
+		List<String> tempList = new ArrayList<>();
+		matList = t1_tv.getItems();
+		int cnt = 0;
+		for(MaterialMainVo matVo  : matList) {
+			if(matVo.getMat_chk().isSelected()) {
+				System.out.println(matVo.getMat_code());
+				tempList.add(matVo.getMat_code());
+			}
+		}
+		// 삭제하는 메서드 넘겨주는 부분
+		cnt = houseService.deleteMat(tempList);
+
+		if(tempList.size() <= 0) {
+			AlertWindow.FailedAlert((Stage)t1_btn_delete.getScene().getWindow());
+			
+		}else {
+			if(cnt > 0) {
+				AlertWindow.SucceedAlert((Stage)t1_btn_delete.getScene().getWindow());
+			}else {
+			}
+			List<MaterialMainVo> materialList = houseService.getMatWearingMain();
+			ObservableList<MaterialMainVo> matMatList = FXCollections.observableArrayList(materialList);
+			t1_tv.setItems(matMatList);
+			
+		}
+
+	}
+
+	/**
+	 * 
+	 *@Method Name : deferentSearch
+	 *@date : 2018. 9. 20.
+	 *@author : JeeSeon
+	 *@Method 설명 : 자재 수불관리 콤보박스 및 검색처리
+	 *@param event
+	 */
+	@FXML
+	void deferentSearch(ActionEvent event) {
+		houseService = MaterialService.getInstance();
+		Map<String, String> astMap = new HashMap<>();
+		if(t2_cb.getValue().toString().equals("분류코드") ) {  // 콤보박스 값을 가져와서 비교하는 부분
+			astMap.put("matc_name", t2_tf.getText());
+		}else if(t2_cb.getValue().toString().equals("자재코드")){
+			astMap.put("ast_mat", t2_tf.getText());
+		}else if(t2_cb.getValue().toString().equals("수불자재명")){
+			astMap.put("ast_name", t2_tf.getText());
+		}else if(t2_cb.getValue().toString().equals("거래처")){
+			astMap.put("buyer_name", t2_tf.getText());
+
+		}
+		List<AssistantVo> astList = houseService.getAst(astMap);
+		ObservableList<AssistantVo> houseVo  = FXCollections.observableArrayList(astList);		
+		t2_tv.setItems(houseVo);
+	}
+
+	
+	/**
+	 * 
+	 *@Method Name : Modified2
+	 *@date : 2018. 9. 20.
+	 *@author : JeeSeon
+	 *@Method 설명 : 
+	 *@param event
+	 */
+	@FXML
+	void Modified2(MouseEvent event) {
+		if(event.getClickCount() > 1) {	// 두번 누르면 실행 
+
+		try {
+			Stage okStage =  (Stage)tab.getScene().getWindow();
+			Stage MatEnrollment = new Stage();						 	
+			MatEnrollment.initModality(Modality.APPLICATION_MODAL); 	
+			MatEnrollment.initOwner(okStage);	
+			System.out.println("들어간다");
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("../fxml/MatModifiedRes2.fxml"));
+			Parent proot = loader.load();
+
+			MatModifiedResController2 update = loader.getController();
+			AssistantVo ast = t2_tv.getSelectionModel().getSelectedItem();
+
+			update.insertToForm(ast);
+
+			System.out.println("갖다온다");
+			Scene scene = new Scene(proot);							
+			MatEnrollment.setScene(scene);		
+			MatEnrollment.initStyle(StageStyle.UNDECORATED);
+			MatEnrollment.showAndWait();
+
+			ObservableList<AssistantVo> houseVo  = FXCollections.observableArrayList(houseService.getMatDeferentMain());		
+			t2_tv.setItems(houseVo);
+
+
+
+		} catch (IOException e) {
+			System.out.println(e);
+		} 
+		}
+	}
+
+
+
+	/**
+	 * 
+	 *@Method Name : deferentDelete
+	 *@date : 2018. 9. 20.
+	 *@author : JeeSeon
+	 *@Method 설명 : 자재 수불관리 삭제
+	 *@param event
+	 */
+	@FXML
+	void deferentDelete(ActionEvent event) {
+		List<AssistantVo> assList = houseService.getMatDeferentMain();
+		List<String> tempList = new ArrayList<>();
+		assList = t2_tv.getItems();
+		int cnt = 0;
+		for(AssistantVo astVo  : assList) {
+			if(astVo.getMat_chk().isSelected()) {
+				System.out.println(astVo.getAst_no());
+				tempList.add(astVo.getAst_no());
+			}
+		}
+		// 삭제하는 메서드 넘겨주는 부분
+		cnt = houseService.deleteAss(tempList);
+		if(tempList.size() <= 0) {
+			AlertWindow.FailedAlert((Stage)t1_btn_delete.getScene().getWindow());
+		}else {
+			if(cnt > 0) {
+				AlertWindow.SucceedAlert((Stage)t1_btn_delete.getScene().getWindow());
+			}else {
+			}
+			List<AssistantVo> materialList = houseService.getMatDeferentMain();
+			ObservableList<AssistantVo> matMatList = FXCollections.observableArrayList(materialList);
+			t2_tv.setItems(matMatList);
+		}
+
+	}
+
+
+	/**
+	 *@Method Name : goExit
+	 *@date : 2018. 9. 6.
+	 *@author : Jeeseon
+	 *@Method 설명 : 로그인으로 이동합니다
+	 *@param event
+	 */
+	@FXML
+	void goLogin(MouseEvent event) {
+		/* 로그아웃 기능 */
+		Stage stage = (Stage) img_logOut.getScene().getWindow();
+		WindowOpstions.windowLogout(stage);
+	}
+
+	/**
+	 *@Method Name : goExit
+	 *@date : 2018. 9. 6.
+	 *@author : Jeeseon
+	 *@Method 설명 : 화면이 꺼집니다.
+	 *@param event
+	 */
+	@FXML
+	void goExit(MouseEvent event) {
+		Platform.exit();
+	}
+
+	/**
+	 *@Method Name : goExit
+	 *@date : 2018. 9. 6.
+	 *@author : Jeeseon
+	 *@Method 설명 : 차트창으로 이동합니다
+	 *@param event
+	 */
+	@FXML
+	void goChart(MouseEvent event) {
+		/* 차트로 이동 */
+		WindowOpstions.windowChart();
+	}
+
+	/**
+	 *@Method Name : goExit
+	 *@date : 2018. 9. 6.
+	 *@author : Jeeseon
+	 *@Method 설명 : 공통항목으로 이동합니다
+	 *@param event
+	 */
+	@FXML
+	void goCommon(MouseEvent event) {
+		/* 공통문서로 이동 */
+		WindowOpstions.windowCommDoc();
+	}
+
+
+	@FXML
+	void initialize() {
+		assert t1_materialCodeCol != null : "fx:id=\"t1_materialCodeCol\" was not injected: check your FXML file 'HouseRes.fxml'.";
+		assert t1_materialCodeCol2 != null : "fx:id=\"t1_materialCodeCol2\" was not injected: check your FXML file 'HouseRes.fxml'.";
+		assert t1_btn_delete != null : "fx:id=\"t1_btn_delete\" was not injected: check your FXML file 'HouseRes.fxml'.";
+		assert img_logOut != null : "fx:id=\"img_logOut\" was not injected: check your FXML file 'HouseRes.fxml'.";
+		assert t2_btn_submint != null : "fx:id=\"t2_btn_submint\" was not injected: check your FXML file 'HouseRes.fxml'.";
+		assert t2_check != null : "fx:id=\"t2_check\" was not injected: check your FXML file 'HouseRes.fxml'.";
+		assert t1_wearingNameCol != null : "fx:id=\"t1_wearingNameCol\" was not injected: check your FXML file 'HouseRes.fxml'.";
+		assert t1_dateOfReceiptCol != null : "fx:id=\"t1_dateOfReceiptCol\" was not injected: check your FXML file 'HouseRes.fxml'.";
+		assert treeView1 != null : "fx:id=\"treeView1\" was not injected: check your FXML file 'HouseRes.fxml'.";
+		assert img_exit != null : "fx:id=\"img_exit\" was not injected: check your FXML file 'HouseRes.fxml'.";
+		assert t1_accountCol != null : "fx:id=\"t1_accountCol\" was not injected: check your FXML file 'HouseRes.fxml'.";
+		assert t2_tv != null : "fx:id=\"t2_tv\" was not injected: check your FXML file 'HouseRes.fxml'.";
+		assert t1_cb != null : "fx:id=\"t1_cb\" was not injected: check your FXML file 'HouseRes.fxml'.";
+		assert t1_check != null : "fx:id=\"t1_check\" was not injected: check your FXML file 'HouseRes.fxml'.";
+		assert t1_btn_search != null : "fx:id=\"t1_btn_search\" was not injected: check your FXML file 'HouseRes.fxml'.";
+		assert t2_tf != null : "fx:id=\"t2_tf\" was not injected: check your FXML file 'HouseRes.fxml'.";
+		assert t2_btn_delete != null : "fx:id=\"t2_btn_delete\" was not injected: check your FXML file 'HouseRes.fxml'.";
+		assert img_common != null : "fx:id=\"img_common\" was not injected: check your FXML file 'HouseRes.fxml'.";
+		assert img_chart != null : "fx:id=\"img_chart\" was not injected: check your FXML file 'HouseRes.fxml'.";
+		assert t2_btn_search != null : "fx:id=\"t2_btn_search\" was not injected: check your FXML file 'HouseRes.fxml'.";
+		assert t1_tf_search != null : "fx:id=\"t1_tf_search\" was not injected: check your FXML file 'HouseRes.fxml'.";
+		assert t2_cb != null : "fx:id=\"t2_cb\" was not injected: check your FXML file 'HouseRes.fxml'.";
+		assert t2_materialCodeCol2 != null : "fx:id=\"t2_materialCodeCol2\" was not injected: check your FXML file 'HouseRes.fxml'.";
+		assert t1_tv != null : "fx:id=\"t1_tv\" was not injected: check your FXML file 'HouseRes.fxml'.";
+		assert t1_quantityCol != null : "fx:id=\"t1_quantityCol\" was not injected: check your FXML file 'HouseRes.fxml'.";
+		assert t1_priceCol != null : "fx:id=\"t1_priceCol\" was not injected: check your FXML file 'HouseRes.fxml'.";
+		assert t1_uprice != null : "fx:id=\"t1_uprice\" was not injected: check your FXML file 'HouseRes.fxml'.";
+		assert tab != null : "fx:id=\"tab\" was not injected: check your FXML file 'HouseRes.fxml'.";
+		assert t1_Remarks != null : "fx:id=\"t1_Remarks\" was not injected: check your FXML file 'HouseRes.fxml'.";
+		assert t2_Remarks != null : "fx:id=\"t2_Remarks\" was not injected: check your FXML file 'HouseRes.fxml'.";
+		assert t2_materialCodeCol2 != null : "fx:id=\"t2_materialCodeCol2\" was not injected: check your FXML file 'HouseRes.fxml'.";
+		assert t2_accountCol != null : "fx:id=\"t2_accountCol\" was not injected: check your FXML file 'HouseRes.fxml'.";
+		assert t2_materialCodeCol != null : "fx:id=\"t2_materialCodeCol\" was not injected: check your FXML file 'HouseRes.fxml'.";
+		assert t2_assDateCol != null : "fx:id=\"t2_assDateCol\" was not injected: check your FXML file 'HouseRes.fxml'.";
+		assert t2_assNumberCol != null : "fx:id=\"t2_assNumberCol\" was not injected: check your FXML file 'HouseRes.fxml'.";
+		assert t2_Remarks != null : "fx:id=\"t2_Remarks\" was not injected: check your FXML file 'HouseRes.fxml'.";
+		assert t2_quantityCol != null : "fx:id=\"t2_quantityCol\" was not injected: check your FXML file 'HouseRes.fxml'.";
+		assert t2_releaseNameCol != null : "fx:id=\"t2_releaseNameCol\" was not injected: check your FXML file 'HouseRes.fxml'.";
+		assert t1_chk != null : "fx:id=\"t1_chk\" was not injected: check your FXML file 'HouseRes.fxml'.";         
+		assert t2_chk != null : "fx:id=\"t2_chk\" was not injected: check your FXML file 'HouseRes.fxml'.";
+
+		leftBar();
+		matWearingMain();
+		matDeferentMain();
+
+		EventHandler<MouseEvent> mouseEventHandle = (MouseEvent event) -> {
+			handleMouseClicked(event);
+		};
+		treeView1.addEventHandler(MouseEvent.MOUSE_CLICKED, mouseEventHandle); 
+
+
+		t1_cb.getItems().addAll("분류코드","자재코드","입고자재명","거래처");
+		t1_cb.getSelectionModel().selectFirst(); // 첫번째값으로 넣어주기 
+		t2_cb.getItems().addAll("분류코드","자재코드","수불자재명","거래처");
+		t2_cb.getSelectionModel().selectFirst(); // 첫번째값으로 넣어주기 
+	}
+
+	@SuppressWarnings("unchecked")
+	public void leftBar(){
+
+
+		TreeItem<String> rootItem;
+		rootItem = new TreeItem<String> (""); // ("InBox", rootICon);
+		item1 = new TreeItem<String> ("자재관리");
+
+		item2 = new TreeItem<String> ("물품관리");
+
+		rootItem.getChildren().addAll(item1, item2);
+		treeView1.setRoot(rootItem);
+		treeView1.setShowRoot(false);
+
+
+	}
+	void goMat(MouseEvent event) {
+
+	}
+
+	/**
+	 *@Method Name : handleMouseClicked
+	 *@date : 2018. 9. 6.
+	 *@author : 
+	 *@Method 설명 : 자재관리부 페이지 전환
+	 *@param 
+	 */
+	@SuppressWarnings("rawtypes")
+	private void handleMouseClicked(MouseEvent event) {
+		Node node = event.getPickResult().getIntersectedNode();
+		if (node instanceof Text || (node instanceof TreeCell && ((TreeCell) node).getText() != null)) {
+			String name = (String) ((TreeItem<String>)treeView1.getSelectionModel().getSelectedItem()).getValue();
+
+
+			if(name.equals(item1.getValue())) {
+				System.out.println(name);
+
+				try {
+					Parent login = FXMLLoader.load(getClass().getResource("../fxml/HouseRes1.fxml"));
+
+					BorderPane root = (BorderPane)img_exit.getScene().getRoot();
+
+					root.getChildren().clear();
+					root.getChildren().add(login);
+
+					KeyValue keyValue = new KeyValue(login.translateXProperty(), 0);
+					KeyFrame keyFrame = new KeyFrame(Duration.millis(100), keyValue);
+					Timeline timeline = new Timeline();
+					timeline.getKeyFrames().add(keyFrame);
+					timeline.play();
+
+
+				}catch (IOException e) {
+					System.out.println("HouseResController1 handleMouseClicked : HouseRes ERROR => " + e);
+				}
+			}else if(name.equals(item2.getValue()) ){
+				try {
+					Parent login = FXMLLoader.load(getClass().getResource("../fxml/HouseRes4.fxml"));
+
+					BorderPane root = (BorderPane)img_exit.getScene().getRoot();
+
+					root.getChildren().clear();
+					root.getChildren().add(login);
+
+					login.setTranslateX(0);  
+					login.setTranslateY(0);
+
+					KeyValue keyValue = new KeyValue(login.translateXProperty(), 0);
+					KeyFrame keyFrame = new KeyFrame(Duration.millis(100), keyValue);
+					Timeline timeline = new Timeline();
+					timeline.getKeyFrames().add(keyFrame);
+					timeline.play();
+				} catch (IOException e) {
+					System.out.println("HouseController4 handleMouseClicked : HouseRes4 ERROR => " + e);
+				}
+
+
+			}
+		}
+	}
+	/**
+	 *@Method Name : matWearingMain
+	 *@date : 2018. 9. 16.
+	 *@author : Jeeseon
+	 *@Method 설명 : 자재관리 입고메인테이블
+	 *@param 
+	 */
+	private void matWearingMain() {
+		System.out.println("matWearingMain1");
+		houseService = MaterialService.getInstance();
+		ObservableList<MaterialMainVo> houseVo  = FXCollections.observableArrayList(houseService.getMatWearingMain());		
+		t1_tv.setItems(houseVo);
+
+		System.out.println(houseVo.toString());
+
+		t1_chk.setCellValueFactory(new PropertyValueFactory<MaterialMainVo, Boolean>("mat_chk"));
+		t1_materialCodeCol.setCellValueFactory(new PropertyValueFactory<MaterialMainVo,String>("matc_name"));
+		t1_materialCodeCol2.setCellValueFactory(new PropertyValueFactory<MaterialMainVo,String>("mat_code"));
+		t1_wearingNameCol.setCellValueFactory(new PropertyValueFactory<MaterialMainVo,String>("mat_name"));
+		t1_accountCol.setCellValueFactory(new PropertyValueFactory<MaterialMainVo,String>("buyer_name"));
+		t1_quantityCol.setCellValueFactory(new PropertyValueFactory<MaterialMainVo,Integer>("mat_qty"));
+		t1_priceCol.setCellValueFactory(new PropertyValueFactory<MaterialMainVo,Integer>("mat_price"));
+		t1_uprice.setCellValueFactory(new PropertyValueFactory<MaterialMainVo,Integer>("mat_uprice"));
+		t1_dateOfReceiptCol.setCellValueFactory(new PropertyValueFactory<MaterialMainVo, String>("mat_date"));
+		t1_Remarks.setCellValueFactory(new PropertyValueFactory<MaterialMainVo,String>("mat_note"));
+
+	}
+
+
+	/**
+	 *@Method Name : matDeferentMain
+	 *@date : 2018. 9. 16.
+	 *@author : Jeeseon
+	 *@Method 설명 : 자재관리 수불메인테이블
+	 *@param 
+	 */
+	private void matDeferentMain() {
+		houseService = MaterialService.getInstance();
+		ObservableList<AssistantVo> assVo  = FXCollections.observableArrayList(houseService.getMatDeferentMain());		
+		t2_tv.setItems(assVo);
+
+		t2_chk.setCellValueFactory(new PropertyValueFactory<AssistantVo, Boolean>("mat_chk"));
+		t2_assNumberCol.setCellValueFactory(new PropertyValueFactory<AssistantVo,Integer>("ast_no"));
+		t2_materialCodeCol.setCellValueFactory(new PropertyValueFactory<AssistantVo,String>("matc_name"));
+		t2_materialCodeCol2.setCellValueFactory(new PropertyValueFactory<AssistantVo,String>("ast_mat"));
+		t2_releaseNameCol.setCellValueFactory(new PropertyValueFactory<AssistantVo,String>("ast_name"));
+		t2_accountCol.setCellValueFactory(new PropertyValueFactory<AssistantVo,String>("buyer_name"));
+		t2_quantityCol.setCellValueFactory(new PropertyValueFactory<AssistantVo,Integer>("ast_qty"));
+		t2_assDateCol.setCellValueFactory(new PropertyValueFactory<AssistantVo,String>("ast_date"));
+		t2_Remarks.setCellValueFactory(new PropertyValueFactory<AssistantVo,String>("ast_note"));
+
+	}
+
+
+
+}

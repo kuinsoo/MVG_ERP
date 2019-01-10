@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox alignment="CENTER" maxHeight="700.0" maxWidth="1000.0" minHeight="700.0" minWidth="1000.0" prefHeight="700.0" prefWidth="1000.0" spacing="5.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="systemAdministration.controller.LoginController">
+   <children>
+      <Pane maxHeight="200.0" maxWidth="1000.0" minHeight="200.0" minWidth="1000.0" prefHeight="200.0" prefWidth="1000.0">
+         <children>
+            <ImageView fitHeight="1000.0" fitWidth="1000.0" layoutY="-98.0">
+               <image>
+                  <Image url="@../../resources/icon/footer_lodyas.png" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="img_logo" fitHeight="81.0" fitWidth="215.0" layoutX="393.0" layoutY="38.0">
+               <image>
+                  <Image url="@../../resources/icon/MVGlogo_red.png" />
+               </image>
+            </ImageView>
+         </children>
+      </Pane>
+      <HBox alignment="CENTER" prefHeight="37.0" prefWidth="200.0" spacing="15.0">
+         <children>
+            <ImageView fitHeight="25.0" fitWidth="25.0">
+               <image>
+                  <Image url="@../../resources/icon/human64x64.png" />
+               </image>
+            </ImageView>
+            <TextField fx:id="tf_id" maxHeight="30.0" maxWidth="170.0" minHeight="30.0" minWidth="170.0" prefHeight="30.0" prefWidth="170.0" promptText="your code" />
+         </children>
+         <VBox.margin>
+            <Insets />
+         </VBox.margin>
+      </HBox>
+      <HBox alignment="CENTER" prefHeight="37.0" prefWidth="200.0" spacing="15.0">
+         <children>
+            <ImageView fitHeight="25.0" fitWidth="25.0">
+               <image>
+                  <Image url="@../../resources/icon/lock64x64.png" />
+               </image>
+            </ImageView>
+            <PasswordField fx:id="tf_pass" maxHeight="30.0" maxWidth="170.0" minHeight="30.0" minWidth="170.0" prefHeight="30.0" prefWidth="170.0" promptText="password" />
+         </children>
+         <VBox.margin>
+            <Insets top="20.0" />
+         </VBox.margin>
+      </HBox>
+      <HBox alignment="CENTER" prefHeight="39.0" prefWidth="200.0">
+         <children>
+            <Button fx:id="btn_login" defaultButton="true" maxHeight="35.0" maxWidth="215.0" minHeight="35.0" minWidth="215.0" mnemonicParsing="false" onAction="#click_btn_login" prefHeight="35.0" prefWidth="215.0" style="-fx-background-color: #313131; -fx-border-color: #787878; -fx-border-width: 1px; -fx-border-radius: 3px;" text="로그인" textFill="WHITE">
+               <font>
+                  <Font name="Malgun Gothic" size="15.0" />
+               </font>
+            </Button>
+         </children>
+         <VBox.margin>
+            <Insets top="40.0" />
+         </VBox.margin>
+      </HBox>
+      <AnchorPane prefHeight="44.0" prefWidth="1000.0">
+         <children>
+            <ImageView fx:id="img_exit" fitHeight="25.0" fitWidth="25.0" layoutX="488.0" layoutY="88.0" onMouseClicked="#click_exit">
+               <image>
+                  <Image url="@../../resources/icon/close64x64.png" />
+               </image>
+            </ImageView>
+         </children>
+      </AnchorPane>
+   </children>
+</VBox>

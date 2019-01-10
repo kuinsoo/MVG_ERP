@@ -1,0 +1,293 @@
+package humanResources.controller;
+
+import java.io.IOException;
+import java.net.URL;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.ResourceBundle;
+
+import humanResources.service.EmployeeService;
+import humanResources.service.IEmployeeService;
+import humanResources.vo.join.GetAllNowEmpVo;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
+import staticMethod.alert.AlertWindow;
+import staticMethod.comboBox.ComboList;
+
+
+public class Hr_empListController {
+
+	@FXML
+	private ResourceBundle resources;
+
+	@FXML
+	private URL location;
+
+	@FXML
+	private TableColumn<GetAllNowEmpVo, Boolean> t1_col_chk;
+
+	@FXML
+	private Button t1_btn_delete;
+
+	@FXML
+	private TableColumn<GetAllNowEmpVo, String> t1_col_gender;
+
+	@FXML
+	private TableColumn<GetAllNowEmpVo, String> t1_col_pos;
+
+	@FXML
+	private AnchorPane tap1_t1;
+
+	@FXML
+	private Button t1_bnt_search;
+
+	@FXML
+	private TabPane t1_tp_main;
+
+	@FXML
+	private Button t1_btn_submit;
+
+	@FXML
+	private TableColumn<GetAllNowEmpVo, String> t1_col_dept;
+
+	@FXML
+	private TextField t1_tf_search;
+
+	@FXML
+	private TableColumn<GetAllNowEmpVo, String> t1_col_name;
+
+	@FXML
+	private CheckBox t1_chk;
+
+	@FXML
+	private ComboBox<String> t1_cb_search;
+
+	@FXML
+	private TableView<GetAllNowEmpVo> t1_tv;
+
+	@FXML
+	private TableColumn<GetAllNowEmpVo, String> t1_col_date;
+
+	@FXML
+	private TableColumn<GetAllNowEmpVo, String> t1_col_code;
+
+
+
+
+	/**
+	 *@Method Name : click_t1_btn_search
+	 *@date : 2018. 9. 20.
+	 *@author : Mr.KKu
+	 *@Method 설명 : 사원 검색 
+	 *@param event
+	 */
+	@FXML
+	void click_t1_btn_search(ActionEvent event) {
+		if(t1_tf_search.getText().equals("")) {
+			searchAllEmp(empService.getAllNowEmp()); 
+		}else {
+			/* 콤보박스 key 값  검색 value 값으로 검색 */
+			empService = EmployeeService.getInstance();
+			Map<String, String> getEmp = new HashMap<>();
+			if(t1_cb_search.getValue().toString().equals("ID")) {
+				getEmp.put("emp_code", t1_tf_search.getText());
+//				getEmp.put("emp_name", t1_tf_search.getText());
+			} else if (t1_cb_search.getValue().toString().equals("사원명")) {
+				getEmp.put("emp_name", t1_tf_search.getText());
+			} else if (t1_cb_search.getValue().toString().equals("부서")) {
+				getEmp.put("dept_name", t1_tf_search.getText());
+//				getEmp.put("emp_name", t1_tf_search.getText());
+			} else if (t1_cb_search.getValue().toString().equals("직급")) {
+				getEmp.put("pos_name", t1_tf_search.getText());
+//				getEmp.put("emp_name", t1_tf_search.getText());
+			}
+			/* key 와 value 값으로 결과 출력*/
+			List<GetAllNowEmpVo> empList = empService.getEmp(getEmp);
+			if(empList.size() == 0) {
+				AlertWindow.infoAlert("Failed", "결과 값이 존재하지 않습니다.");
+			}else {
+				searchAllEmp(empList);    			
+			}
+		}//else 
+	}
+
+	/**
+	 *@Method 설명 : 업데이트 창
+	 *@Method Name : click_t1_tv
+	 *@date : 2018. 9. 19.
+	 *@author : Mr.KKu
+	 *@param event
+	 */
+	@FXML
+	void click_t1_tv(MouseEvent event) {
+		if (event.getClickCount() > 1) { 
+			Stage updateEmp = new Stage();
+			if(t1_tv.getSelectionModel().getSelectedItem() == null) {
+
+			} else {
+				try {
+					FXMLLoader loader = new FXMLLoader(getClass().getResource("../fxml/hr_empList_update.fxml"));
+					updateEmp.initModality(Modality.APPLICATION_MODAL); 	// 모달창 셋팅 
+					updateEmp.initOwner(t1_tp_main.getScene().getWindow());						// 부모창 설정
+					Parent pRoot = loader.load();
+					Hr_empList_updateController formController = loader.getController();
+					GetAllNowEmpVo empVo = t1_tv.getSelectionModel().getSelectedItem();
+					int year = Integer.parseInt(empVo.getEmp_hdate().substring(0,4));
+					int month = Integer.parseInt(empVo.getEmp_hdate().substring(5,7));
+					int day = Integer.parseInt(empVo.getEmp_hdate().substring(8,10));
+					LocalDate  currentTime = LocalDate.now();
+					LocalDate targetTime = currentTime.withYear(year).withMonth(month).withDayOfMonth(day);
+					formController.getEmpInfo(empVo.getEmp_code() , targetTime);
+					Scene scene = new Scene(pRoot);							// 새창을 연결
+					updateEmp.setScene(scene);								// 스테이지에 새씬을 연결한다.
+					updateEmp.showAndWait();										// 열어주세요.
+				} catch (IOException e) {
+					System.out.println("hr_empListController" + e);
+				}
+				searchAllEmp(empService.getAllNowEmp()); // 새로고침
+			}
+		}
+	}
+
+	/**
+	 *@Method 설명 : 회원 등록 
+	 *@Method Name : click_submit
+	 *@date : 2018. 9. 20.
+	 *@author : Mr.KKu
+	 *@param event
+	 */
+	@FXML
+	void click_submit(ActionEvent event) {
+		try {
+			Stage hrStage =  (Stage)t1_tp_main.getScene().getWindow();
+			Stage addEmp = new Stage();						 	// 새로운 스테이지를 하나만든다.
+			addEmp.initModality(Modality.APPLICATION_MODAL); 	// 모달창 셋팅 
+			addEmp.initOwner(hrStage);							// 부모창 설정
+			Parent proot = FXMLLoader.load(getClass().getResource("../fxml/hr_empList_add.fxml")); // 위치 
+			Scene scene = new Scene(proot);							// 새창을 연결
+			addEmp.setScene(scene);								// 스테이지에 새씬을 연결한다.
+			addEmp.initStyle(StageStyle.UNDECORATED);
+			addEmp.showAndWait();										// 열어주세요.
+		} catch (IOException e) {
+			System.out.println("HumanRes.fxml(click_submit) :" + e);
+		} // Error표시를 출력해주는 주소
+		searchAllEmp(empService.getAllNowEmp()); // 새로고침
+	}
+
+	@FXML
+	void click_delete(ActionEvent event) {
+		/* 삭제 함수 */
+		if(AlertWindow.confirmAlert("정말로 삭제 하시겠습니까?", "체크된 모든 회원이 삭제 됩니다.").showAndWait().get() == ButtonType.OK) {
+			empList = empService.getAllNowEmp();
+			List<String> tempList = new ArrayList<>();
+			empList = t1_tv.getItems();
+			for (GetAllNowEmpVo employeeVo : empList) {
+				if(employeeVo.getEmp_chk().isSelected()) {
+//					System.out.println(employeeVo.getEmp_code());
+					tempList.add(employeeVo.getEmp_code());
+				} 
+			}
+			if(tempList.size() == 0) {
+				AlertWindow.FailedAlert((Stage) t1_btn_delete.getScene().getWindow());
+				return;
+			}
+			int cnt = empService.deleteEmp(tempList);
+				
+			if(cnt > 0 ) {
+				System.out.println(cnt + "건이 삭제되었습니다.");
+				AlertWindow.SucceedAlert((Stage) t1_btn_delete.getScene().getWindow());
+			} else {
+				AlertWindow.FailedAlert((Stage) t1_btn_delete.getScene().getWindow());
+			}
+		}
+		
+		searchAllEmp(empService.getAllNowEmp()); // 새로고침
+	}
+
+	@FXML
+	void select_t1_chk(ActionEvent event) {
+		empList = empService.getAllNowEmp();
+		if(t1_chk.isSelected()) {
+			for (GetAllNowEmpVo employeeVo : empList) {
+				employeeVo.getEmp_chk().setSelected(true);
+			}
+		} else {
+			for (GetAllNowEmpVo employeeVo : empList) {
+				employeeVo.getEmp_chk().setSelected(false);
+			}
+		}
+		searchAllEmp(empList); // 새로고침
+
+	}
+
+	/* 전역 변수 선언 */
+	private IEmployeeService empService  = EmployeeService.getInstance();;
+	private List<GetAllNowEmpVo> empList    = empService.getAllNowEmp();
+	private ObservableList<GetAllNowEmpVo> objList;
+
+	@FXML
+	void initialize() {
+		assert t1_col_chk != null : "fx:id=\"t1_col_chk\" was not injected: check your FXML file 'HumanRes2.fxml'.";
+		assert t1_btn_delete != null : "fx:id=\"t1_btn_delete\" was not injected: check your FXML file 'HumanRes2.fxml'.";
+		assert t1_col_gender != null : "fx:id=\"t1_col_gender\" was not injected: check your FXML file 'HumanRes2.fxml'.";
+		assert t1_col_pos != null : "fx:id=\"t1_col_pos\" was not injected: check your FXML file 'HumanRes2.fxml'.";
+		assert tap1_t1 != null : "fx:id=\"tap1_t1\" was not injected: check your FXML file 'HumanRes2.fxml'.";
+		assert t1_bnt_search != null : "fx:id=\"t1_bnt_search\" was not injected: check your FXML file 'HumanRes2.fxml'.";
+		assert t1_tp_main != null : "fx:id=\"t1_tp_hr\" was not injected: check your FXML file 'HumanRes2.fxml'.";
+		assert t1_btn_submit != null : "fx:id=\"t1_btn_submit\" was not injected: check your FXML file 'HumanRes2.fxml'.";
+		assert t1_col_dept != null : "fx:id=\"t1_col_dept\" was not injected: check your FXML file 'HumanRes2.fxml'.";
+		assert t1_tf_search != null : "fx:id=\"t1_tf_search\" was not injected: check your FXML file 'HumanRes2.fxml'.";
+		assert t1_col_name != null : "fx:id=\"t1_col_name\" was not injected: check your FXML file 'HumanRes2.fxml'.";
+		assert t1_cb_search != null : "fx:id=\"t1_cb_search\" was not injected: check your FXML file 'HumanRes2.fxml'.";
+		assert t1_tv != null : "fx:id=\"t1_tv\" was not injected: check your FXML file 'HumanRes2.fxml'.";
+		assert t1_col_date != null : "fx:id=\"t1_col_date\" was not injected: check your FXML file 'HumanRes2.fxml'.";
+		assert t1_col_code != null : "fx:id=\"t1_col_code\" was not injected: check your FXML file 'HumanRes2.fxml'.";
+		assert t1_chk != null : "fx:id=\"t1_chk\" was not injected: check your FXML file 'hr_empList.fxml'.";
+
+		//시작 .....
+		searchAllEmp(empList); // 회원목록을 전부 띄워주는 메서드 
+
+		/* 콤보박스 설정 기본값을 first값으로 설정해준다 */
+		t1_cb_search.setItems(ComboList.searchCombo());
+		t1_cb_search.getSelectionModel().selectFirst(); 
+
+	}// initialize()
+
+	/**
+	 *@Method Name : searchAllEmp
+	 *@date : 2018. 9. 14.
+	 *@author : Mr.KKu
+	 *@Method 설명 : 사원 전부 검색 
+	 */
+	public void searchAllEmp(List<GetAllNowEmpVo> empList) {
+		/* 체크박스 사용시 주의 사항
+		 * ex) 연결되어있는 GetAllNowEmpVo 에서 체크박스를 생성합니다.  (겟터셋터 그리고 오버라이드된 셋터하나더 )
+		 * GetAllNowEmpVo 열어서 내용 확인후   EmployeeDao 에서 getAllNowEmp() 메서드안에 내용을 확인한다.
+		 * 검색된 수만큼 체크박스를 생성해주는 방식을 이용했다. */
+		objList = FXCollections.observableArrayList(empList);
+		t1_tv.setItems(objList);
+		t1_col_chk.setCellValueFactory(new PropertyValueFactory<GetAllNowEmpVo, Boolean>("emp_chk"));
+		t1_col_code.setCellValueFactory(new PropertyValueFactory<GetAllNowEmpVo, String>("emp_code"));
+		t1_col_dept.setCellValueFactory(new PropertyValueFactory<GetAllNowEmpVo, String>("dept_name"));
+		t1_col_pos.setCellValueFactory(new PropertyValueFactory<GetAllNowEmpVo, String>("pos_name"));
+		t1_col_name.setCellValueFactory(new PropertyValueFactory<GetAllNowEmpVo, String>("emp_name"));
+		t1_col_gender.setCellValueFactory(new PropertyValueFactory<GetAllNowEmpVo, String>("emp_gender"));
+		t1_col_date.setCellValueFactory(new PropertyValueFactory<GetAllNowEmpVo, String>("emp_hdate"));
+	} //searchAllEmp()
+
+}
